@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود به سیستم - {{ settings.system_name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        @font-face {
+            font-family: 'B Nazanin';
+            src: url('https://cdn.jsdelivr.net/gh/rastikerdar/sahel-font@v3.4.0/dist/Farsi-Digits/SAHELFDI-WOL.ttf') format('truetype');
+        }
+        
+        body {
+            {% if settings.background_path %}
+            background: url("{{ url_for('static', filename=settings.background_path) }}") no-repeat center center fixed;
+            {% else %}
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            {% endif %}
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'B Nazanin', Tahoma, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            max-width: {{ settings.login_width }}px;
+            {% if settings.login_height != 'auto' %}
+            height: {{ settings.login_height }}px;
+            {% endif %}
+            width: 90%;
+            text-align: center;
+            font-family: 'B Nazanin', Tahoma, Arial, sans-serif;
+            position: absolute;
+            left: {{ settings.login_position_x }}%;
+            top: {{ settings.login_position_y }}%;
+            transform: translate(-50%, -50%);
+            {% if settings.login_height != 'auto' %}
+            overflow-y: auto;
+            {% endif %}
+        }
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .logo .default-logo {
+            font-size: 40px;
+            color: #666;
+        }
+        .btn-login {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 12px;
+            width: 100%;
+            font-size: 16px;
+            border-radius: 25px;
+            font-family: 'B Nazanin', Tahoma, Arial, sans-serif;
+            margin-top: 20px;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s ease;
+        }
+        .btn-login:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            color: white;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+            font-family: 'B Nazanin', Tahoma, Arial, sans-serif;
+        }
+        h4 {
+            font-family: 'B Nazanin', Tahoma, Arial, sans-serif;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .alert {
+            font-family: 'B Nazanin', Tahoma, Arial, sans-serif;
+        }
+        .login-features {
+            margin: 20px 0;
+            text-align: right;
+        }
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .feature-icon {
+            background: #4CAF50;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            {% if settings.logo_path %}
+            <img src="{{ url_for('static', filename=settings.logo_path) }}" alt="Logo">
+            {% else %}
+            <div class="default-logo">🏢</div>
+            {% endif %}
+        </div>
+        <h4 class="mb-3">{{ settings.system_name }}</h4>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ 'danger' if category == 'error' else 'info' }} mt-3">
+                  {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div class="login-features">
+            <div class="feature-item">
+                <span class="feature-text">{{ settings.login_text_1 }}</span>
+                <div class="feature-icon">{{ settings.login_icon_1 }}</div>
+            </div>
+            <div class="feature-item">
+                <span class="feature-text">{{ settings.login_text_2 }}</span>
+                <div class="feature-icon">{{ settings.login_icon_2 }}</div>
+            </div>
+            <div class="feature-item">
+                <span class="feature-text">{{ settings.login_text_3 }}</span>
+                <div class="feature-icon">{{ settings.login_icon_3 }}</div>
+            </div>
+        </div>
+
+        <a href="/auth/start" class="btn-login">
+            <i class="bi {{ settings.login_button_icon }}"></i>
+            {{ settings.login_button_text }}
+        </a>
+        
+        <div class="footer mt-3">
+            {{ settings.copyright_text }}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

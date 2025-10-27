@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}صفحه پیدا نشد - {{ settings.system_name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 text-center">
+        <div class="card">
+            <div class="card-body py-5">
+                <div class="mb-4">
+                    <i class="bi bi-exclamation-triangle" style="font-size: 4rem; color: #ffc107;"></i>
+                </div>
+                <h3 class="text-warning">۴۰۴ - صفحه پیدا نشد</h3>
+                <p class="text-muted mb-4">صفحه‌ای که به دنبال آن هستید وجود ندارد یا حذف شده است.</p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="/dashboard" class="btn btn-primary">
+                        <i class="bi bi-house"></i> بازگشت به داشبورد
+                    </a>
+                    <a href="/" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-right"></i> صفحه اصلی
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}گزارش‌ها - {{ settings.system_name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">📈 گزارش‌گیری و آمار</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    این بخش به زودی تکمیل خواهد شد. در اینجا نمودارها و گزارش‌های پیشرفت پروژه‌ها نمایش داده می‌شود.
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="bi bi-pie-chart" style="font-size: 3rem; color: #6f42c1;"></i>
+                                <h6 class="mt-2">گزارش پیشرفت پروژه‌ها</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="bi bi-bar-chart" style="font-size: 3rem; color: #20c997;"></i>
+                                <h6 class="mt-2">آمار عملکرد کاربران</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

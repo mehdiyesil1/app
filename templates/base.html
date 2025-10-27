@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ settings.system_name }}{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <style>
+        /* فونت نازنین برای کل سیستم */
+        @font-face {
+            font-family: 'Nazanin';
+            src: url('{{ url_for("static", filename="fonts/B-NAZANIN.TTF") }}') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --header-color: {{ settings.header_color }};
+            --header-text-color: {{ settings.header_text_color }};
+            --background-color: {{ settings.background_color }};
+        }
+        
+        /* فونت نازنین برای تمام عناصر */
+        * {
+            font-family: 'Nazanin', 'B Nazanin', 'BNazanin', Tahoma, sans-serif !important;
+        }
+        
+        body {
+            background-color: var(--background-color) !important;
+            padding-top: 20px;
+        }
+        
+        .main-container {
+            min-height: calc(100vh - 100px);
+        }
+        
+        /* استایل‌های سفارشی برای هدر */
+        .navbar-custom {
+            background-color: var(--header-color) !important;
+            border-radius: 10px;
+            margin: 0 15px;
+            padding: 0.5rem 1rem;
+        }
+        
+        .navbar-custom .navbar-brand {
+            font-weight: bold;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar-logo {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-left: 10px;
+        }
+        
+        .navbar-custom .nav-link {
+            padding: 0.5rem 1rem;
+            margin: 0 0.2rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            color: var(--header-text-color) !important;
+        }
+        
+        .navbar-custom .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        .navbar-custom .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            font-weight: bold;
+        }
+        
+        /* استایل تاریخ شمسی */
+        .persian-date-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            margin: 0 15px;
+            margin-top: 5px;
+            transform: translateY(3px);
+        }
+        
+        .persian-date {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--header-text-color) !important;
+        }
+        
+        /* استایل منوی کاربری */
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            overflow: hidden;
+        }
+        
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .user-info {
+            text-align: right;
+        }
+        
+        .user-menu .dropdown-menu {
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            margin-top: 10px;
+            min-width: 200px;
+        }
+        
+        .user-menu .dropdown-item {
+            padding: 0.7rem 1rem;
+            border-bottom: 1px solid #f8f9fa;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+        
+        .user-menu .dropdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .user-menu .dropdown-item:hover {
+            background-color: #f8f9fa;
+            padding-right: 1.5rem;
+        }
+        
+        .user-menu .dropdown-divider {
+            margin: 0.3rem 0;
+        }
+        
+        /* استایل پیام‌های سیستم */
+        .flash-messages-container {
+            position: fixed;
+            top: 90px;
+            right: 30px;
+            z-index: 9999;
+            min-width: 350px;
+        }
+        
+        .alert {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-right: 4px solid;
+        }
+        
+        .alert-success {
+            border-right-color: #198754;
+        }
+        
+        .alert-danger {
+            border-right-color: #dc3545;
+        }
+        
+        .alert-info {
+            border-right-color: #0dcaf0;
+        }
+        
+        /* استایل محتوای اصلی */
+        .content-wrapper {
+            padding: 20px 15px;
+        }
+        
+        /* استایل کارت‌ها */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .card:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+            transform: translateY(-2px);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--header-color), #0a58ca);
+            color: white;
+            border-radius: 12px 12px 0 0 !important;
+            padding: 1rem 1.5rem;
+            border: none;
+        }
+        
+        .card-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        /* استایل دکمه‌ها */
+        .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 0.5rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--header-color), #0a58ca);
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+        }
+        
+        .btn-sm {
+            padding: 0.4rem 1rem;
+            font-size: 0.85rem;
+        }
+        
+        /* استایل جداول */
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .table th {
+            background: linear-gradient(135deg, var(--header-color), #0a58ca);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-weight: 600;
+        }
+        
+        .table td {
+            padding: 0.9rem 1rem;
+            border-color: #f8f9fa;
+            vertical-align: middle;
+        }
+        
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* استایل فرم‌ها */
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--header-color);
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
+        }
+        
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #495057;
+        }
+        
+        /* استایل آمار در داشبورد */
+        .stat-card {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+        
+        /* استایل‌های برای تمام عناصر متنی */
+        h1, h2, h3, h4, h5, h6,
+        .h1, .h2, .h3, .h4, .h5, .h6,
+        p, span, div, small, strong, em,
+        .text-muted, .fw-bold, .fw-normal,
+        .badge, .form-text {
+            font-family: 'Nazanin', 'B Nazanin', 'BNazanin', Tahoma, sans-serif !important;
+        }
+        
+        /* استایل‌های responsive */
+        @media (max-width: 768px) {
+            .navbar-custom {
+                margin: 0 10px;
+                padding: 0.5rem;
+            }
+            
+            .persian-date-container {
+                margin: 0 10px;
+                padding: 0.4rem 0.8rem;
+            }
+            
+            .persian-date {
+                font-size: 0.85rem;
+            }
+            
+            .flash-messages-container {
+                right: 15px;
+                left: 15px;
+                min-width: auto;
+            }
+            
+            .content-wrapper {
+                padding: 15px 10px;
+            }
+            
+            .card-header {
+                padding: 0.8rem 1rem;
+            }
+            
+            .btn {
+                padding: 0.4rem 1rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* بهبود نمایش اعداد در فونت نازنین */
+        .stat-number,
+        .table td:contains-numbers,
+        .badge {
+            font-feature-settings: "numr";
+        }
+
+        /* اطمینان از فونت نازنین برای آیکون‌های بوت استرپ */
+        .bi::before {
+            font-family: bootstrap-icons !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- هدر اصلی -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+        <div class="container-fluid">
+            <!-- لوگو و نام سیستم -->
+            <a class="navbar-brand" href="/dashboard">
+                {% if settings.logo_path %}
+                <img src="{{ url_for('static', filename=settings.logo_path) }}" alt="Logo" class="navbar-logo">
+                {% else %}
+                <i class="bi bi-building me-2"></i>
+                {% endif %}
+                {{ settings.system_name }}
+            </a>
+            
+            <!-- دکمه منو در موبایل -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- منوی اصلی -->
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <!-- منوی داشبورد -->
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/dashboard' %}active{% endif %}" href="/dashboard">
+                            <i class="bi bi-speedometer2 me-1"></i>
+                            داشبورد
+                        </a>
+                    </li>
+                    
+                    <!-- منوی پروژه‌ها -->
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/projects' %}active{% endif %}" href="/projects">
+                            <i class="bi bi-folder me-1"></i>
+                            پروژه‌ها
+                        </a>
+                    </li>
+                    
+                    <!-- منوی حساب‌ها -->
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/accounts' %}active{% endif %}" href="/accounts">
+                            <i class="bi bi-people me-1"></i>
+                            حساب‌ها
+                        </a>
+                    </li>
+                    
+                    <!-- منوی گزارش‌ها -->
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/reports' %}active{% endif %}" href="/reports">
+                            <i class="bi bi-graph-up me-1"></i>
+                            گزارش‌ها
+                        </a>
+                    </li>
+                    
+                    <!-- منوی تنظیمات (فقط برای ادمین) -->
+                    {% if session.is_admin %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/admin/settings' %}active{% endif %}" href="/admin/settings">
+                            <i class="bi bi-gear me-1"></i>
+                            تنظیمات
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                
+                <!-- بخش سمت چپ: تاریخ و کاربر -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <!-- تاریخ شمسی -->
+                    <li class="nav-item">
+                        <div class="persian-date-container">
+                            <div class="persian-date text-center">
+                                <i class="bi bi-calendar3 me-2"></i>
+                                <span id="persianDate">-- -- --</span>
+                            </div>
+                        </div>
+                    </li>
+                    
+                    <!-- منوی کاربری -->
+                    <li class="nav-item dropdown user-menu">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                            <div class="user-avatar">
+                                {% set display_avatar = get_user_display_avatar(session.get('user_id', '')) %}
+                                {% if display_avatar %}
+                                <img src="{{ url_for('static', filename=display_avatar) }}" alt="پروفایل">
+                                {% else %}
+                                <i class="bi bi-person-fill"></i>
+                                {% endif %}
+                            </div>
+                            <div class="user-info me-2 text-start">
+                                <div style="font-size: 0.9rem; font-weight: 500;">{{ session.full_name }}</div>
+                                <div style="font-size: 0.75rem; opacity: 0.8;">{{ session.get('position', 'عضو') }}</div>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-start">
+                            <li>
+                                <a class="dropdown-item text-end" href="/user/profile">
+                                    <i class="bi bi-person me-2"></i>
+                                    پروفایل کاربری
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider my-1"></li>
+                            <li>
+                                <a class="dropdown-item text-end text-danger" href="/logout">
+                                    <i class="bi bi-box-arrow-left me-2"></i>
+                                    خروج از سیستم
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- پیام‌های سیستم -->
+    <div class="flash-messages-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' if category == 'success' else 'info' }} alert-dismissible fade show mb-2">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-{{ 'exclamation-triangle' if category == 'error' else 'check-circle' if category == 'success' else 'info-circle' }} me-2"></i>
+                            <div class="flex-grow-1">{{ message }}</div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- محتوای اصلی -->
+    <div class="main-container">
+        <div class="content-wrapper">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <!-- اسکریپت‌ها -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // تابع تبدیل تاریخ میلادی به شمسی
+        function gregorianToJalali(gy, gm, gd) {
+            var g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+            var jy = (gy <= 1600) ? 0 : 979;
+            gy -= (gy <= 1600) ? 621 : 1600;
+            var gy2 = (gm > 2) ? (gy + 1) : gy;
+            var days = (365 * gy) + (parseInt((gy2 + 3) / 4)) - (parseInt((gy2 + 99) / 100)) + (parseInt((gy2 + 399) / 400)) - 80 + gd + g_d_m[gm - 1];
+            jy += 33 * (parseInt(days / 12053));
+            days %= 12053;
+            jy += 4 * (parseInt(days / 1461));
+            days %= 1461;
+            jy += parseInt((days - 1) / 365);
+            if (days > 365) days = (days - 1) % 365;
+            var jm = (days < 186) ? 1 + parseInt(days / 31) : 7 + parseInt((days - 186) / 30);
+            var jd = 1 + ((days < 186) ? (days % 31) : ((days - 186) % 30));
+            return [jy, jm, jd];
+        }
+
+        // نمایش تاریخ شمسی
+        function updatePersianDate() {
+            const now = new Date();
+            const gy = now.getFullYear();
+            const gm = now.getMonth() + 1;
+            const gd = now.getDate();
+            
+            const jalali = gregorianToJalali(gy, gm, gd);
+            const jy = jalali[0];
+            const jm = jalali[1];
+            const jd = jalali[2];
+            
+            const persianMonths = [
+                'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
+                'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'
+            ];
+            
+            const weekdays = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'];
+            const weekday = weekdays[now.getDay()];
+            
+            const formattedDate = `${weekday} ${jd} ${persianMonths[jm - 1]} ${jy}`;
+            
+            const dateElement = document.getElementById('persianDate');
+            if (dateElement) {
+                dateElement.textContent = formattedDate;
+            }
+        }
+
+        // بستن خودکار پیام‌های سیستم
+        function autoCloseAlerts() {
+            const flashTimeout = {{ settings.flash_timeout|default(3) }} * 1000;
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, flashTimeout);
+            });
+        }
+
+        // اجرای توابع هنگام لود صفحه
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePersianDate();
+            autoCloseAlerts();
+            
+            // بروزرسانی تاریخ هر دقیقه
+            setInterval(updatePersianDate, 60000);
+        });
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

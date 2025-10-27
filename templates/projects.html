@@ -1,0 +1,1345 @@
+{% extends "base.html" %}
+
+{% block title %}پروژه‌ها - {{ settings.system_name }}{% endblock %}
+
+{% block content %}
+<style>
+:root {
+    --header-color: {{ settings.header_color }};
+    --header-text-color: {{ settings.header_text_color }};
+}
+
+/* استایل برای دکمه‌ها */
+.btn-primary, .btn-success, .btn-info {
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-primary:hover, .btn-success:hover, .btn-info:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* استایل خاص برای دکمه به‌روزرسانی */
+.btn-primary:hover {
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+}
+
+/* استایل خاص برای دکمه خروجی */
+.btn-success:hover {
+    box-shadow: 0 4px 12px rgba(25, 135, 84, 0.3);
+}
+
+/* استایل خاص برای دکمه پیشرفت */
+.btn-info:hover {
+    box-shadow: 0 4px 12px rgba(13, 202, 240, 0.3);
+}
+
+/* فونت بی نازنین برای کل صفحه */
+body {
+    font-family: 'B Nazanin', 'B Nazanin+', 'BNazanin', Tahoma, sans-serif !important;
+}
+
+/* استایل‌های جدید برای تنظیم خودکار عرض ستون‌ها */
+.project-table {
+    table-layout: auto !important;
+    width: 100% !important;
+    min-width: unset !important;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    font-size: 0.85rem;
+    font-family: 'B Nazanin', 'B Nazanin+', 'BNazanin', Tahoma, sans-serif;
+}
+
+.project-table th {
+    background: linear-gradient(135deg, var(--header-color), #0a58ca);
+    color: white;
+    border: none;
+    padding: 0.6rem 0.4rem;
+    font-weight: 600;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.8rem;
+    font-family: 'B Nazanin', 'B Nazanin+', 'BNazanin', Tahoma, sans-serif;
+}
+
+.project-table td {
+    padding: 0.5rem 0.4rem;
+    border-color: #f8f9fa;
+    vertical-align: middle;
+    text-align: center;
+    transition: all 0.3s ease;
+    font-size: 0.8rem;
+    font-family: 'B Nazanin', 'B Nazanin+', 'BNazanin', Tahoma, sans-serif;
+}
+
+.project-table th,
+.project-table td {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+    max-width: none !important;
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+/* برای ستون‌های خاص که محتوای بیشتری دارند */
+.project-table .description-cell {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.project-table .wide-column {
+    min-width: 120px;
+    max-width: 200px;
+}
+
+.project-table .narrow-column {
+    min-width: 50px;
+    max-width: 100px;
+}
+
+/* استایل مخصوص برای ستون‌های خاص */
+.project-table .status-column {
+    min-width: 100px;
+    max-width: 120px;
+}
+
+.project-table .voltage-column {
+    min-width: 100px;
+    max-width: 150px;
+}
+
+.project-table .team-column {
+    min-width: 80px;
+    max-width: 120px;
+}
+
+.project-table .name-column {
+    min-width: 150px;
+    max-width: 250px;
+}
+
+.project-table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.project-table tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: translateX(3px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* وضعیت‌های پروژه */
+.status-on_track {
+    background-color: #d1fae5 !important;
+    color: #065f46 !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.status-at_risk {
+    background-color: #fef3c7 !important;
+    color: #92400e !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.status-off_track {
+    background-color: #fee2e2 !important;
+    color: #991b1b !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.status-not_started {
+    background-color: #dbeafe !important;
+    color: #1e40af !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.status-finished {
+    background-color: #dcfce7 !important;
+    color: #166534 !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.status-discontinued {
+    background-color: #cffafe !important;
+    color: #155e75 !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.status-default {
+    background-color: #f3f4f6 !important;
+    color: #374151 !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+/* وضعیت فعال/غیرفعال */
+.active-true {
+    background-color: #dcfce7 !important;
+    color: #166534 !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.active-false {
+    background-color: #fecaca !important;
+    color: #dc2626 !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+/* وضعیت عمومی/خصوصی */
+.public-true {
+    background-color: #dbeafe !important;
+    color: #1e40af !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.public-false {
+    background-color: #e5e7eb !important;
+    color: #4b5563 !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+/* آواتار پروژه */
+.project-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin: 0 auto;
+}
+
+/* دکمه‌ها */
+.btn-view {
+    background: linear-gradient(135deg, #10b981, #059669);
+    border: none;
+    color: white;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-view:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    color: white;
+}
+
+.btn-export {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    border: none;
+    color: white;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-export:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    color: white;
+}
+
+/* آمار */
+.stats-card {
+    background: linear-gradient(135deg, var(--header-color), #0a58ca);
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(13, 110, 253, 0.15);
+}
+
+/* جستجو و فیلتر */
+.search-box {
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+}
+
+.filter-select {
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+    font-size: 0.85rem;
+}
+
+/* توضیحات با محدودیت ارتفاع */
+.description-cell {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: help;
+    font-size: 0.8rem;
+}
+
+/* تاریخ‌ها */
+.date-cell {
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    direction: ltr;
+    text-align: center;
+}
+
+/* وضعیت کش */
+.cache-info {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    border-right: 4px solid var(--header-color);
+}
+
+/* badge ها */
+.badge {
+    color: #000 !important;
+    font-weight: 600;
+    font-size: 0.7rem;
+    border: none !important;
+    background: none !important;
+    padding: 0.15rem 0.3rem;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.2;
+}
+
+.status-on_track,
+.status-at_risk, 
+.status-off_track,
+.status-default,
+.active-true,
+.active-false,
+.public-true,
+.public-false {
+    color: #000 !important;
+    border: none !important;
+    background: none !important;
+}
+
+/* progress bar */
+.progress-cell {
+    min-width: 80px;
+}
+
+.progress-percentage {
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+.progress-on_track {
+    color: #059669;
+}
+
+.progress-other {
+    color: #6b7280;
+}
+
+/* اضافه کردن اسکرول نرم برای جدول */
+.table-responsive {
+    overflow-x: auto;
+    border-radius: 8px;
+}
+
+/* برای حالت responsive */
+@media (max-width: 1400px) {
+    .project-table {
+        font-size: 0.75rem;
+    }
+    
+    .project-table .wide-column {
+        min-width: 100px;
+        max-width: 180px;
+    }
+    
+    .project-table .narrow-column {
+        min-width: 40px;
+        max-width: 80px;
+    }
+    
+    .project-table .status-column {
+        min-width: 90px;
+        max-width: 110px;
+    }
+    
+    .project-table .voltage-column {
+        min-width: 90px;
+        max-width: 130px;
+    }
+    
+    .project-table .team-column {
+        min-width: 70px;
+        max-width: 100px;
+    }
+}
+
+/* بهبود نمایش روی موبایل */
+@media (max-width: 768px) {
+    .project-table {
+        font-size: 0.7rem;
+    }
+    
+    .project-table th,
+    .project-table td {
+        padding: 0.3rem 0.2rem;
+    }
+    
+    .btn-view, .btn-export {
+        font-size: 0.6rem;
+        padding: 0.15rem 0.3rem;
+    }
+}
+
+/* استایل برای ستون‌های مخفی */
+.hidden-column {
+    display: none;
+}
+</style>
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- هدر و آمار -->
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h5 class="mb-0 text-primary">
+                                <i class="bi bi-folder me-2"></i>
+                                مدیریت پروژه‌ها
+                            </h5>
+                            <p class="text-muted mb-0">لیست کامل پروژه‌های سیستم کاربان</p>
+                        </div>
+                        <div class="col-md-6 text-start">
+                            <button class="btn btn-primary btn-sm me-2" onclick="refreshProjects()">
+                                <i class="bi bi-arrow-repeat"></i> به‌روزرسانی لیست
+                            </button>
+                            <button class="btn btn-info btn-sm me-2" onclick="refreshProgress()">
+                                <i class="bi bi-graph-up"></i> به‌روزرسانی پیشرفت
+                            </button>
+                            <a class="btn btn-success btn-sm" href="/projects/export">
+                                <i class="bi bi-file-earmark-excel"></i> خروجی Excel
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- آمار سریع -->
+                    <div class="row mt-3">
+                        <div class="col-md-2">
+                            <div class="card stats-card">
+                                <div class="card-body text-center py-2">
+                                    <h4 class="mb-1">{{ stats.total }}</h4>
+                                    <small>کل پروژه‌ها</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="card stats-card">
+                                <div class="card-body text-center py-2">
+                                    <h4 class="mb-1">{{ stats.active }}</h4>
+                                    <small>پروژه‌های فعال</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="card stats-card">
+                                <div class="card-body text-center py-2">
+                                    <h4 class="mb-1">{{ stats.not_started }}</h4>
+                                    <small>شروع نشده</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="card stats-card">
+                                <div class="card-body text-center py-2">
+                                    <h4 class="mb-1">{{ stats.on_track }}</h4>
+                                    <small>در مسیر</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="card stats-card">
+                                <div class="card-body text-center py-2">
+                                    <h4 class="mb-1">{{ stats.at_risk }}</h4>
+                                    <small>در خطر</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="card stats-card">
+                                <div class="card-body text-center py-2">
+                                    <h4 class="mb-1">{{ stats.off_track }}</h4>
+                                    <small>متوقف شده</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- اطلاعات کش -->
+                    {% if cache_info %}
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="cache-info">
+                                <i class="bi bi-info-circle"></i>
+                                آخرین به‌روزرسانی: 
+                                <strong>
+                                    {% if cache_info.last_sync %}
+                                        {{ format_sync_date(cache_info.last_sync) }}
+                                    {% else %}
+                                        نامشخص
+                                    {% endif %}
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- جستجو و فیلتر -->
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <div class="input-group search-box">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="جستجو در نام پروژه‌ها، شناسه یا توضیحات..." onkeyup="filterProjects()">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select filter-select" id="statusFilter" onchange="filterProjects()">
+                                <option value="">همه وضعیت‌ها</option>
+                                <option value="on_track">در مسیر</option>
+                                <option value="at_risk">در خطر</option>
+                                <option value="off_track">متوقف شده</option>
+                                <option value="not_started">شروع نشده</option>
+                                <option value="finished">تمام شده</option>
+                                <option value="discontinued">رها شده</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select filter-select" id="voltageFilter" onchange="filterProjects()">
+                                <option value="">همه سطوح ولتاژ</option>
+                                <option value="lv">LV</option>
+                                <option value="mv">MV</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- جدول پروژه‌ها -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover project-table" id="projectsTable">
+                            <thead>
+                                <tr>
+                                    {% set column_config = {
+                                        'row_number': {'width': 'auto', 'title': 'ردیف', 'class': 'narrow-column'},
+                                        'avatar': {'width': 'auto', 'title': 'آواتار', 'class': 'narrow-column'},
+                                        'id': {'width': 'auto', 'title': 'ID', 'class': 'narrow-column'},
+                                        'name': {'width': 'auto', 'title': 'نام پروژه', 'class': 'name-column'},
+                                        'identifier': {'width': 'auto', 'title': 'شناسه', 'class': 'narrow-column'},
+                                        'project_code': {'width': 'auto', 'title': 'کد پروژه', 'class': 'narrow-column'},
+                                        'voltage_level': {'width': 'auto', 'title': 'سطح ولتاژ', 'class': 'voltage-column'},
+                                        'panel_type': {'width': 'auto', 'title': 'نوع تابلو', 'class': 'wide-column'},
+                                        'panel_count': {'width': 'auto', 'title': 'تعداد تابلو', 'class': 'narrow-column'},
+                                        'cell_count': {'width': 'auto', 'title': 'تعداد سلول', 'class': 'narrow-column'},
+                                        'department': {'width': 'auto', 'title': 'دپارتمان', 'class': 'wide-column'},
+                                        'team_leader': {'width': 'auto', 'title': 'مسئول تیم', 'class': 'wide-column'},
+                                        'team': {'width': 'auto', 'title': 'تیم', 'class': 'team-column'},
+                                        'equipment_date': {'width': 'auto', 'title': 'تاریخ لیست تجهیزات', 'class': 'narrow-column'},
+                                        'urgent': {'width': 'auto', 'title': 'پروژه فوری', 'class': 'narrow-column'},
+                                        'status': {'width': 'auto', 'title': 'وضعیت', 'class': 'status-column'},
+                                        'active': {'width': 'auto', 'title': 'فعال', 'class': 'narrow-column'},
+                                        'public': {'width': 'auto', 'title': 'دسترسی', 'class': 'narrow-column'},
+                                        'created_at': {'width': 'auto', 'title': 'تاریخ ایجاد', 'class': 'narrow-column'},
+                                        'updated_at': {'width': 'auto', 'title': 'آخرین بروزرسانی', 'class': 'narrow-column'},
+                                        'link': {'width': 'auto', 'title': 'لینک', 'class': 'narrow-column'},
+                                        'description': {'width': 'auto', 'title': 'توضیحات', 'class': 'description-cell wide-column'},
+                                        'progress_percentage': {'width': 'auto', 'title': 'درصد پروژه های در مسیر', 'class': 'narrow-column'}
+                                    } %}
+                                    
+                                    {% for column_name, config in column_config.items() %}
+                                        {% if column_settings[column_name].visible %}
+                                        <th class="{{ config.class }}">{{ config.title }}</th>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody id="projectsTableBody">
+                                {% if projects %}
+                                    {% for project in projects %}
+                                    {% set custom_fields = project.get('custom_fields', {}) %}
+                                    <tr class="project-row" 
+                                        data-name="{{ project.name|lower }}" 
+                                        data-identifier="{{ project.identifier|lower if project.identifier else '' }}" 
+                                        data-description="{{ project.description.html|striptags|lower if project.description and project.description.html else '' }}"
+                                        data-status="{{ project.status }}"
+                                        data-project-code="{{ get_custom_field_value(project, '1')|lower }}"
+                                        data-voltage="{{ get_custom_field_value(project, '16')|lower }}"
+                                        data-panel-type="{{ get_custom_field_value(project, '21')|lower }}">
+                                        
+                                        {% if column_settings.row_number.visible %}
+                                        <!-- شماره ردیف -->
+                                        <td>
+                                            <strong>{{ loop.index }}</strong>
+                                        </td>
+                                        {% endif %}
+                                        
+                                        {% if column_settings.avatar.visible %}
+                                        <!-- آواتار -->
+                                        <td>
+                                            <div class="project-avatar">
+                                                {{ project.name[:1] if project.name else 'P' }}
+                                            </div>
+                                        </td>
+                                        {% endif %}
+                                        
+                                        {% if column_settings.id.visible %}
+                                        <!-- ID -->
+                                        <td>
+                                            <strong>#{{ project.id }}</strong>
+                                        </td>
+                                        {% endif %}
+                                        
+                                        {% if column_settings.name.visible %}
+                                        <!-- نام پروژه -->
+                                        <td>
+                                            <strong>{{ project.name or 'بدون نام' }}</strong>
+                                        </td>
+                                        {% endif %}
+                                        
+                                        {% if column_settings.identifier.visible %}
+                                        <!-- شناسه -->
+                                        <td>
+                                            <code>{{ project.identifier or '---' }}</code>
+                                        </td>
+                                        {% endif %}
+                                        
+                                        {% if column_settings.project_code.visible %}
+                                        <!-- کد پروژه -->
+                                        <td>
+                                            {% set project_code = get_custom_field_value(project, '1') %}
+                                            {% if project_code %}
+                                                <span class="badge bg-primary rounded-pill">
+                                                    {{ project_code }}
+                                                </span>
+                                            {% else %}
+                                                <span class="text-muted">---</span>
+                                            {% endif %}
+                                        </td>
+                                        {% endif %}
+                                        
+                                        {% if column_settings.voltage_level.visible %}
+                                        <!-- سطح ولتاژ -->
+                                        <td>
+                                            {% set voltage_data = get_custom_field_value(project, '24') %}
+                                            {% if voltage_data %}
+                                                {% if voltage_data.startswith('[') and voltage_data.endswith(']') %}
+                                                    {% set voltage_clean = voltage_data.replace('[', '').replace(']', '').replace('{', '').replace('}', '') %}
+                                                    {% set items = voltage_clean.split(", ") %}
+                                                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                                                        {% for item in items %}
+                                                            {% if "'title':" in item %}
+                                                                {% set title_part = item.split("'title':")[1] %}
+                                                                {% if "'" in title_part %}
+                                                                    {% set title = title_part.split("'")[1] %}
+                                                                    {% if title and title != 'href' and not title.startswith('/api/') %}
+                                                                        <span class="badge bg-info rounded-pill" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;">
+                                                                            {{ title }}
+                                                                        </span>
+                                                                    {% endif %}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    <span class="badge bg-info rounded-pill">
+                                                        {{ voltage_data }}
+                                                    </span>
+                                                {% endif %}
+                                            {% else %}
+                                                <span class="text-muted">---</span>
+                                            {% endif %}
+                                        </td>
+                                        {% endif %}
+ 
+                                        {% if column_settings.panel_type.visible %}
+                                        <!-- نوع تابلو -->
+                                        <td>
+                                            {% set panel_type = get_custom_field_value(project, '21') %}
+                                            {% if panel_type %}
+                                                {% if panel_type.startswith('[') and panel_type.endswith(']') %}
+                                                    {% set panel_clean = panel_type.replace('[', '').replace(']', '').replace('{', '').replace('}', '') %}
+                                                    {% set items = panel_clean.split(", ") %}
+                                                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                                                        {% for item in items %}
+                                                            {% if "'title':" in item %}
+                                                                {% set title_part = item.split("'title':")[1] %}
+                                                                {% if "'" in title_part %}
+                                                                    {% set title = title_part.split("'")[1] %}
+                                                                    {% if title and title != 'href' and not title.startswith('/api/') %}
+                                                                        <span class="badge bg-warning rounded-pill" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;">
+                                                                            {{ title }}
+                                                                        </span>
+                                                                    {% endif %}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    <span class="badge bg-warning rounded-pill">
+                                                        {{ panel_type }}
+                                                    </span>
+                                                {% endif %}
+                                            {% else %}
+                                                <span class="text-muted">---</span>
+                                            {% endif %}
+                                        </td>
+                                        {% endif %}                               
+                                        
+                                        {% if column_settings.panel_count.visible %}
+                                        <!-- تعداد تابلو -->
+                                        <td>
+                                            {% set panel_count = get_custom_field_value(project, '4') %}
+                                            {% if panel_count %}
+                                                <span class="badge bg-success rounded-pill">
+                                                    {{ panel_count }}
+                                                </span>
+                                            {% else %}
+                                                <span class="text-muted">---</span>
+                                            {% endif %}
+                                        </td>
+                                        {% endif %}
+                                        
+                                        {% if column_settings.cell_count.visible %}
+                                        <!-- تعداد سلول -->
+                                        <td>
+                                            {% set cell_count = get_custom_field_value(project, '5') %}
+                                            {% if cell_count %}
+                                                <span class="badge bg-danger rounded-pill">
+                                                    {{ cell_count }}
+                                                </span>
+                                            {% else %}
+                                                <span class="text-muted">---</span>
+                                            {% endif %}
+                                        </td>
+                                        {% endif %}
+                                        
+                                        {% if column_settings.department.visible %}
+                                        <!-- دپارتمان -->
+                                        <td>
+                                            {% set department_data = get_custom_field_value(project, '25') %}
+                                            {% if department_data %}
+                                                {% if department_data.startswith('[') and department_data.endswith(']') %}
+                                                    {% set department_clean = department_data.replace('[', '').replace(']', '').replace('{', '').replace('}', '') %}
+                                                    {% set items = department_clean.split(", ") %}
+                                                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                                                        {% for item in items %}
+                                                            {% if "'title':" in item %}
+                                                                {% set title_part = item.split("'title':")[1] %}
+                                                                {% if "'" in title_part %}
+                                                                    {% set title = title_part.split("'")[1] %}
+                                                                    {% if title and title != 'href' and not title.startswith('/api/') %}
+                                                                        <span class="badge bg-secondary rounded-pill" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;">
+                                                                            {{ title }}
+                                                                        </span>
+                                                                    {% endif %}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    <span class="badge bg-secondary rounded-pill">
+                                                        {{ department_data }}
+                                                    </span>
+                                                {% endif %}
+                                            {% else %}
+                                                <span class="text-muted">---</span>
+                                            {% endif %}
+                                        </td>
+                                        {% endif %}
+                                        
+                                        {% if column_settings.team_leader.visible %}
+                                        <!-- مسئول تیم -->
+                                        <td>
+                                            {% set team_leader_data = get_custom_field_value(project, '26') %}
+                                            {% if team_leader_data %}
+                                                {% if team_leader_data.startswith('[') and team_leader_data.endswith(']') %}
+                                                    {% set team_leader_clean = team_leader_data.replace('[', '').replace(']', '').replace('{', '').replace('}', '') %}
+                                                    {% set items = team_leader_clean.split(", ") %}
+                                                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                                                        {% for item in items %}
+                                                            {% if "'title':" in item %}
+                                                                {% set title_part = item.split("'title':")[1] %}
+                                                                {% if "'" in title_part %}
+                                                                    {% set title = title_part.split("'")[1] %}
+                                                                    {% if title and title != 'href' and not title.startswith('/api/') %}
+                                                                        <span class="badge bg-primary rounded-pill" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;">
+                                                                            {{ title }}
+                                                                        </span>
+                                                                    {% endif %}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    <span class="badge bg-primary rounded-pill">
+                                                        {{ team_leader_data }}
+                                                    </span>
+                                                {% endif %}
+                                            {% else %}
+                                                <span class="text-muted">---</span>
+                                            {% endif %}
+                                        </td>
+                                        {% endif %}
+                                        
+                                        {% if column_settings.team.visible %}
+                                        <!-- تیم -->
+                                        <td>
+                                            {% set team_data = get_custom_field_value(project, '27') %}
+                                            {% if team_data %}
+                                                {% if team_data.startswith('[') and team_data.endswith(']') %}
+                                                    {% set team_clean = team_data.replace('[', '').replace(']', '').replace('{', '').replace('}', '') %}
+                                                    {% set items = team_clean.split(", ") %}
+                                                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                                                        {% for item in items %}
+                                                            {% if "'title':" in item %}
+                                                                {% set title_part = item.split("'title':")[1] %}
+                                                                {% if "'" in title_part %}
+                                                                    {% set title = title_part.split("'")[1] %}
+                                                                    {% if title and title != 'href' and not title.startswith('/api/') %}
+                                                                        <span class="badge bg-success rounded-pill" style="font-size: 0.7rem; padding: 0.2rem 0.4rem;">
+                                                                            {{ title }}
+                                                                        </span>
+                                                                    {% endif %}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% else %}
+                                                    <span class="badge bg-success rounded-pill">
+                                                        {{ team_data }}
+                                                    </span>
+                                                {% endif %}
+                                            {% else %}
+                                                <span class="text-muted">---</span>
+                                            {% endif %}
+                                        </td>
+                                        {% endif %}
+                                        
+                                        {% if column_settings.equipment_date.visible %}
+                                        <!-- تاریخ لیست تجهیزات اولیه -->
+                                        <td class="date-cell">
+                                            {% set equipment_date = get_custom_field_value(project, '8') %}
+                                            {% if equipment_date %}
+                                                {{ convert_to_jalali(equipment_date) }}
+                                            {% else %}
+                                                <span class="text-muted">---</span>
+                                            {% endif %}
+                                        </td>
+                                        {% endif %}
+                                        
+                                        {% if column_settings.urgent.visible %}
+                                        <!-- پروژه فوری -->
+                                        <td>
+                                            {% set urgent = get_custom_field_value(project, '10') %}
+                                            {% if urgent == 'true' %}
+                                                <span class="badge bg-danger rounded-pill">
+                                                    فوری
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-success rounded-pill">
+                                                    عادی
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        {% endif %}
+
+                                        {% if column_settings.status.visible %}
+                                        <!-- وضعیت -->
+                                        <td>
+                                            {% if project.status %}
+                                                {% if project.status is string %}
+                                                    <span class="badge status-{{ project.status|lower }} rounded-pill">
+                                                        {% if project.status == 'on_track' %}
+                                                            در مسیر
+                                                        {% elif project.status == 'at_risk' %}
+                                                            در معرض خطر
+                                                        {% elif project.status == 'off_track' %}
+                                                            خارج از مسیر
+                                                        {% elif project.status == 'not_started' %}
+                                                            شروع نشده
+                                                        {% elif project.status == 'finished' %}
+                                                            تمام شده
+                                                        {% elif project.status == 'discontinued' %}
+                                                            رها شده
+                                                        {% else %}
+                                                            {{ project.status }}
+                                                        {% endif %}
+                                                    </span>
+                                                {% elif project.status is mapping and project.status.id %}
+                                                    <span class="badge status-{{ project.status.id|lower }} rounded-pill">
+                                                        {% if project.status.name %}
+                                                            {{ project.status.name }}
+                                                        {% elif project.status.id == 'on_track' %}
+                                                            در مسیر
+                                                        {% elif project.status.id == 'at_risk' %}
+                                                            در معرض خطر
+                                                        {% elif project.status.id == 'off_track' %}
+                                                            خارج از مسیر
+                                                        {% elif project.status.id == 'not_started' %}
+                                                            شروع نشده
+                                                        {% elif project.status.id == 'finished' %}
+                                                            تمام شده
+                                                        {% elif project.status.id == 'discontinued' %}
+                                                            رها شده
+                                                        {% else %}
+                                                            {{ project.status.id }}
+                                                        {% endif %}
+                                                    </span>
+                                                {% else %}
+                                                    <span class="badge status-default rounded-pill">تنظیم نشده</span>
+                                                {% endif %}
+                                            {% else %}
+                                                <span class="badge status-default rounded-pill">تنظیم نشده</span>
+                                            {% endif %}
+                                        </td>
+                                        {% endif %}
+
+                                        {% if column_settings.active.visible %}
+                                        <!-- فعال -->
+                                        <td>
+                                            <span class="badge active-{{ project.active }} rounded-pill">
+                                                {% if project.active %}
+                                                    فعال
+                                                {% else %}
+                                                    غیرفعال
+                                                {% endif %}
+                                            </span>
+                                        </td>
+                                        {% endif %}
+
+                                        {% if column_settings.public.visible %}
+                                        <!-- دسترسی -->
+                                        <td>
+                                            <span class="badge public-{{ project.public }} rounded-pill">
+                                                {% if project.public %}
+                                                    عمومی
+                                                {% else %}
+                                                    خصوصی
+                                                {% endif %}
+                                            </span>
+                                        </td>
+                                        {% endif %}
+
+                                        {% if column_settings.created_at.visible %}
+                                        <!-- تاریخ ایجاد -->
+                                        <td class="date-cell">
+                                            {% if project.createdAt %}
+                                                {{ convert_to_jalali(project.createdAt[:10]) }}
+                                            {% elif project.created_at %}
+                                                {{ convert_to_jalali(project.created_at[:10]) }}
+                                            {% else %}
+                                                <span class="text-muted">تنظیم نشده</span>
+                                            {% endif %}
+                                        </td>
+                                        {% endif %}
+
+                                        {% if column_settings.updated_at.visible %}
+                                        <!-- آخرین بروزرسانی -->
+                                        <td class="date-cell">
+                                            {% if project.updatedAt %}
+                                                {{ convert_to_jalali(project.updatedAt[:10]) }}
+                                            {% elif project.updated_at %}
+                                                {{ convert_to_jalali(project.updated_at[:10]) }}
+                                            {% else %}
+                                                <span class="text-muted">تنظیم نشده</span>
+                                            {% endif %}
+                                        </td>
+                                        {% endif %}
+
+                                        {% if column_settings.link.visible %}
+                                        <!-- لینک -->
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                {% if project.identifier %}
+                                                <a href="{{ OP_BASE_URL }}/projects/{{ project.identifier }}" 
+                                                   target="_blank" 
+                                                   class="btn-view">
+                                                    <i class="bi bi-box-arrow-up-right"></i> مشاهده
+                                                </a>
+                                                {% else %}
+                                                <button class="btn btn-secondary btn-sm" disabled>
+                                                    <i class="bi bi-box-arrow-up-right"></i> مشاهده
+                                                </button>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                        {% endif %}
+
+                                        {% if column_settings.description.visible %}
+                                        <!-- توضیحات -->
+                                        <td class="description-cell" title="{% if project.description and project.description.html %}{{ project.description.html|striptags }}{% else %}بدون توضیحات{% endif %}">
+                                            {% if project.description and project.description.html %}
+                                                {{ project.description.html|striptags|truncate(50) }}
+                                            {% else %}
+                                                <span class="text-muted">---</span>
+                                            {% endif %}
+                                        </td>
+                                        {% endif %}
+
+                                        {% if column_settings.progress_percentage.visible %}
+                                        <!-- درصد پروژه های در مسیر -->
+                                        <td class="progress-cell">
+                                            {% set progress = project.get('progress', {}) %}
+                                            {% if project.status == 'on_track' and progress and progress.percentage_done is defined %}
+                                                <span class="progress-percentage progress-on_track">
+                                                    {{ progress.percentage_done }}%
+                                                </span>
+                                            {% else %}
+                                                <span class="progress-percentage progress-other">
+                                                    ---
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        {% endif %}
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                <tr>
+                                    <td colspan="23" class="text-center py-5">
+                                        <i class="bi bi-folder-x" style="font-size: 3rem; color: #6c757d;"></i>
+                                        <h5 class="mt-3 text-muted">پروژه‌ای یافت نشد</h5>
+                                        <p class="text-muted">هیچ پروژه‌ای در سیستم کاربان وجود ندارد یا امکان دسترسی به آن‌ها میسر نیست.</p>
+                                        <button class="btn btn-primary" onclick="refreshProjects()">
+                                            <i class="bi bi-arrow-repeat"></i> تلاش مجدد
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- اطلاعات پagination -->
+                    {% if projects %}
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <small class="text-muted">
+                                نمایش <strong id="visibleCount">{{ projects|length }}</strong> پروژه از <strong>{{ stats.total }}</strong> پروژه
+                            </small>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// تابع برای تنظیم خودکار عرض ستون‌ها
+function autoAdjustColumnWidths() {
+    const table = document.getElementById('projectsTable');
+    if (!table) return;
+    
+    console.log('🔄 تنظیم خودکار عرض ستون‌ها...');
+    
+    // ریست کردن استایل‌ها
+    const headers = table.querySelectorAll('th');
+    const cells = table.querySelectorAll('td');
+    
+    headers.forEach(header => {
+        header.style.width = '';
+        header.style.minWidth = '';
+        header.style.maxWidth = '';
+    });
+    
+    cells.forEach(cell => {
+        cell.style.width = '';
+        cell.style.minWidth = '';
+        cell.style.maxWidth = '';
+    });
+    
+    // تنظیم table-layout به auto
+    table.style.tableLayout = 'auto';
+    
+    console.log('✅ عرض ستون‌ها به صورت خودکار تنظیم شد');
+}
+
+// فیلتر کردن پروژه‌ها
+function filterProjects() {
+    const searchText = document.getElementById('searchInput').value.toLowerCase();
+    const statusFilter = document.getElementById('statusFilter').value;
+    const voltageFilter = document.getElementById('voltageFilter').value;
+    
+    const projectRows = document.querySelectorAll('.project-row');
+    let visibleCount = 0;
+    
+    // پیدا کردن index ستون سطح ولتاژ
+    const headerRow = document.querySelector('#projectsTable thead tr');
+    const headers = Array.from(headerRow.querySelectorAll('th'));
+    const voltageIndex = headers.findIndex(th => {
+        const text = th.textContent.trim();
+        return text === 'سطح ولتاژ' || text === 'ولتاژ';
+    });
+    
+    projectRows.forEach((row, index) => {
+        const projectName = row.getAttribute('data-name');
+        const projectIdentifier = row.getAttribute('data-identifier');
+        const projectDescription = row.getAttribute('data-description');
+        const projectStatus = row.getAttribute('data-status');
+        
+        // خواندن متن واقعی از سلول سطح ولتاژ
+        let voltageText = '';
+        if (voltageIndex !== -1) {
+            const voltageCell = row.querySelector(`td:nth-child(${voltageIndex + 1})`);
+            if (voltageCell) {
+                voltageText = voltageCell.textContent.toLowerCase().trim();
+                // حذف فاصله‌های اضافی برای فیلتر بهتر
+                voltageText = voltageText.replace(/\s+/g, '');
+            }
+        }
+        
+        const matchesSearch = searchText === '' || 
+                            projectName.includes(searchText) || 
+                            projectIdentifier.includes(searchText) || 
+                            projectDescription.includes(searchText);
+        
+        const matchesStatus = !statusFilter || projectStatus === statusFilter;
+        
+        // فیلتر سطح ولتاژ - روی متن نمایش داده شده
+        const matchesVoltage = !voltageFilter || 
+                              (voltageText && voltageText.includes(voltageFilter.toLowerCase()));
+        
+        if (matchesSearch && matchesStatus && matchesVoltage) {
+            row.style.display = 'table-row';
+            visibleCount++;
+            
+            // به‌روزرسانی شماره ردیف
+            const rowNumberCell = row.querySelector('td:first-child');
+            if (rowNumberCell) {
+                rowNumberCell.innerHTML = `<strong>${visibleCount}</strong>`;
+            }
+        } else {
+            row.style.display = 'none';
+        }
+    });
+    
+    // نمایش پیام اگر هیچ پروژه‌ای پیدا نشد
+    const emptyState = document.querySelector('.text-center.py-5');
+    if (emptyState) {
+        emptyState.style.display = visibleCount === 0 ? 'table-row' : 'none';
+    }
+    
+    // به‌روزرسانی تعداد نمایش داده شده
+    document.getElementById('visibleCount').textContent = visibleCount;
+    
+    console.log(`فیلتر اعمال شد: ${visibleCount} پروژه نمایش داده می‌شوند`);
+}
+
+// به‌روزرسانی لیست پروژه‌ها
+function refreshProjects() {
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    
+    btn.innerHTML = '<i class="bi bi-arrow-repeat spinner"></i> در حال به‌روزرسانی...';
+    btn.disabled = true;
+    
+    fetch('/projects/refresh')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('لیست پروژه‌ها با موفقیت به‌روزرسانی شد', 'success');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                showToast('خطا: ' + data.message, 'error');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        })
+        .catch(error => {
+            showToast('خطا در ارتباط با سرور', 'error');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
+}
+
+// به‌روزرسانی پیشرفت پروژه‌ها
+function refreshProgress() {
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    
+    btn.innerHTML = '<i class="bi bi-graph-up spinner"></i> در حال به‌روزرسانی پیشرفت...';
+    btn.disabled = true;
+    
+    fetch('/projects/refresh_progress')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast(data.message, 'success');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                showToast('خطا: ' + data.message, 'error');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        })
+        .catch(error => {
+            showToast('خطا در ارتباط با سرور', 'error');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
+}
+
+// نمایش toast
+function showToast(message, type = 'info') {
+    const toastContainer = document.getElementById('toastContainer');
+    if (!toastContainer) {
+        const container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.style.position = 'fixed';
+        container.style.top = '20px';
+        container.style.right = '20px';
+        container.style.zIndex = '10000';
+        document.body.appendChild(container);
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${type} alert-dismissible fade show`;
+    toast.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.getElementById('toastContainer').appendChild(toast);
+    
+    // حذف خودکار بعد از 5 ثانیه
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.remove();
+        }
+    }, 5000);
+}
+
+// فعال کردن tooltip برای توضیحات
+document.addEventListener('DOMContentLoaded', function() {
+    // اضافه کردن tooltip به توضیحات
+    const descriptionCells = document.querySelectorAll('.description-cell');
+    descriptionCells.forEach(cell => {
+        cell.addEventListener('mouseenter', function(e) {
+            const title = this.getAttribute('title');
+            if (title && title !== 'بدون توضیحات') {
+                // ایجاد tooltip دستی
+                const tooltip = document.createElement('div');
+                tooltip.className = 'custom-tooltip';
+                tooltip.innerHTML = title;
+                tooltip.style.position = 'absolute';
+                tooltip.style.background = 'rgba(0,0,0,0.9)';
+                tooltip.style.color = 'white';
+                tooltip.style.padding = '8px 12px';
+                tooltip.style.borderRadius = '6px';
+                tooltip.style.zIndex = '10000';
+                tooltip.style.maxWidth = '400px';
+                tooltip.style.wordWrap = 'break-word';
+                tooltip.style.fontSize = '0.8rem';
+                
+                document.body.appendChild(tooltip);
+                
+                const rect = this.getBoundingClientRect();
+                tooltip.style.left = (rect.left + window.scrollX) + 'px';
+                tooltip.style.top = (rect.top + window.scrollY - tooltip.offsetHeight - 10) + 'px';
+                
+                this._tooltip = tooltip;
+            }
+        });
+        
+        cell.addEventListener('mouseleave', function() {
+            if (this._tooltip) {
+                this._tooltip.remove();
+                this._tooltip = null;
+            }
+        });
+    });
+    
+    // اجرای خودکار تنظیم عرض ستون‌ها
+    setTimeout(() => {
+        autoAdjustColumnWidths();
+    }, 500);
+    
+    // تنظیم مجدد هنگام فیلتر کردن
+    const originalFilterProjects = window.filterProjects;
+    window.filterProjects = function() {
+        originalFilterProjects();
+        setTimeout(() => {
+            autoAdjustColumnWidths();
+        }, 300);
+    };
+    
+    // تنظیم مجدد هنگام تغییر سایز پنجره
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            autoAdjustColumnWidths();
+        }, 250);
+    });
+    
+    console.log('تعداد پروژه‌ها:', {{ projects|length }});
+});
+
+// اضافه کردن استایل برای spinner و tooltip
+const style = document.createElement('style');
+style.innerHTML = `
+    .spinner {
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .custom-tooltip {
+        animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

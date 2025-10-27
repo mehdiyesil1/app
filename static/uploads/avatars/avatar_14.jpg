@@ -1,0 +1,346 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      lang="fa"
+      xml:lang="fa"
+      class="">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width">
+<title>ورود | کاربان</title>
+
+
+<meta name="app_base_path" content=""/>
+<base href="/" />
+
+
+<meta name="boards_demo_data_available" content="true"/>
+<meta name="demo_view_of_type_team_planner_seeded" content="true"/>
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="FGremmq5VQh8id5JpCzBZwo58mGiQ/uc39SzvlUuWSXTHrMS3ipHRVH09/pk34siAm197uzxW1x6u8mho9mK3A==" />
+<meta name="openproject_initializer" data-locale="fa" data-defaultLocale="en" data-firstWeekOfYear="" data-firstDayOfWeek="" data-environment="production" data-edition="standard" />
+
+<!-- global meta hooks before any scripts are loaded-->
+
+
+
+  <link rel="apple-touch-icon" type="image/png" href="/assets/apple-touch-icon-120x120-7cc127b22515cb03208e0cd2ab29c30545d6c1d232a8d68058c751bf29626354.png" sizes="120x120" />
+
+
+
+
+<script src="/assets/frontend/vendor.js"></script><script src="/assets/frontend/polyfills.js"></script><script src="/assets/frontend/runtime.js"></script><script src="/assets/frontend/main.js"></script><link rel="stylesheet" href="/assets/frontend/styles.css" media="all" />
+
+<link rel="stylesheet" href="/highlighting/styles/4f183bfb40ba096859dc7ac053310e18bb7f7ab7abcfde55151983135cc0780b.css" media="all" />
+
+
+  <style type="text/css">
+
+    .op-logo--link {
+      background-image: url(/custom_style/1758538226/logo/logo_karban_white_big.png);
+    }
+  </style>
+
+<style type="text/css">
+
+  /* Overwrite Primer primitives */
+  [data-color-mode] {
+      --body-background: var(--color-canvas-default);
+      --body-font-color: var(--color-fg-default);
+      --color-accent-fg: var(--content-link-color) !important;
+
+        --color-btn-primary-bg:  #35C53F !important;
+        --color-btn-primary-hover-bg:  #2ba234 !important;
+        --color-accent-fg: #175A8E !important;
+  }
+</style>
+
+    
+<style type="text/css">
+    :root {
+        --primary-color: #1A67A3;
+        --primary-color--minor1: #5f95bf;
+        --primary-color--minor2: #a3c2da;
+        --primary-color--minor3: #d1e1ed;
+        --primary-color--major1: #155282;
+        --primary-color--major2: #103e62;
+        --primary-color--major3: #0a2941;
+        --primary-color-dark: #175A8E;
+        --alternative-color: #35C53F;
+        --button--alt-highlight-background-hover-color: #2ba234;
+        --content-link-color: #175A8E;
+        --header-bg-color: #1A67A3;
+        --header-item-bg-hover-color: #175A8E;
+        --header-item-font-color: #FFFFFF;
+        --header-item-font-hover-color: #FFFFFF;
+        --main-menu-bg-color: #333739;
+        --main-menu-bg-selected-background: #175A8E;
+        --main-menu-bg-hover-background: #124E7C;
+        --main-menu-font-color: #FFFFFF;
+        --main-menu-hover-font-color: #FFFFFF;
+        --main-menu-selected-font-color: #FFFFFF;
+        --main-menu-border-color: #EAEAEA;
+        --main-menu-border-width: 1px;
+    }
+
+</style>
+
+      <link rel="icon" type="image/png" href="/custom_style/1758538226/favicon/karban_blue_32x32.png" sizes="32x32">
+
+  <!-- project specific tags -->
+  
+
+  <!-- page specific tags -->
+  
+  <meta name="current_menu_item" content=""/>
+</head>
+<body
+  class="theme-core_design controller-account action-login ee-banners-hidden env-production bcf-deactivated __overflowing_element_container __overflowing_body"
+  data-relative_url_root="/"
+  data-overflowing-identifier=".__overflowing_body"
+  data-rendered-at="2025-10-26T14:27:48Z"
+  data-controller="application"
+  data-color-mode=light data-light-theme=light
+>
+<div class="warning-bar--wrapper">
+  
+  
+  
+</div>
+
+<noscript>
+  <div class="top-shelf">
+    <p>
+      <span>
+        <i class="icon3 icon-warning"  aria-hidden="true"></i>
+        <strong>جاوا اسکریپت غیرفعال است</strong>
+      </span>
+      برای استفاده از کاربان باید جاوا اسکریپت را فعال کنید!
+      <a href="http://www.enable-javascript.com/" target="_blank">بیشتر بیاموزید</a>
+    </p>
+  </div>
+</noscript>
+<op-toasts-container></op-toasts-container>
+<op-modal-overlay></op-modal-overlay>
+<spot-drop-modal-portal></spot-drop-modal-portal>
+<div id="wrapper" style="" class="can-hide-navigation nosidebar">
+    <header class="op-app-header">
+      <div class="op-app-header--start">
+        <h1 class="hidden-for-sighted">
+          منو بالا
+        </h1>
+        <main-menu-toggle></main-menu-toggle>
+        <a href="" class="hidden-for-sighted skip-navigation-link"
+           id="skip-navigation--content"
+           aria-label="برای رد شدن از منو و رفتن به محتوا اینجا را کلیک کنید">
+          برو به محتوا
+        </a>
+        <ul class="op-app-menu op-app-menu_drop-left"></ul>
+      </div>
+      <div class="op-app-header--center">
+        <div class="op-logo"><a class="op-logo--link" href="http://karban.jaboun.network/">خانه</a></div>
+      </div>
+      <div class="op-app-header--end">
+        
+        <div class="op-app-search">
+  <label class="hidden-for-sighted" for="q">جستجو</label>
+
+  <global-search-input></global-search-input>
+</div>
+<ul class="op-app-menu"><li class="op-app-menu--item op-app-menu--item_has-dropdown hidden-for-mobile"><a icon="icon-menu" title="ماژولها" aria-haspopup="true" class="op-app-menu--item-action  " span_class="op-app-menu--item-title " href="#"><i class="icon-menu"  aria-hidden="true"></i><span class="op-app-menu--item-title "></span></a><ul style="display:none" id="more-menu" class="op-app-menu--dropdown op-menu drop-down--modules "><li class="main-menu-item" data-name="activity"><a class="activity-menu-item op-menu--item-action" title="فعالیت" data-qa-selector="op-menu--item-action" href="http://karban.jaboun.network/activity"><span class="spot-icon spot-icon_1_25 spot-icon_checkmark"></span><span class="op-menu--item-title"><span class="ellipsis">فعالیت</span></span></a></li></ul></li><li class="op-app-menu--item op-app-menu--item_has-dropdown "><a class="op-app-menu--item-action" title="ورود" href="/login"><span class="op-app-menu--item-title hidden-for-mobile">ورود</span><i class="op-app-menu--item-dropdown-indicator button--dropdown-indicator hidden-for-mobile"></i><i class="icon2 icon-user hidden-for-desktop"></i></a><ul style="display:none" class="op-app-menu--dropdown ">
+<div id="nav-login-content">
+  <form autocomplete="off" class="-vertical form" action="/login" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" /><input type="hidden" name="authenticity_token" value="Xgh6oWTRy0e2LrtmFmGzX8fxmEo79rCK2vT6vWchjqKesthAew1mpfAXEjzB6cYe8mQyU/Q9Dxtoq0OMgumqow==" autocomplete="off" />
+    <input type="hidden" name="back_url" id="back_url" value="http://karban.jaboun.network/users/14/avatar" autocomplete="off" />
+
+    <div class="grid-block">
+      <div class="form--field -required">
+        <label class="form--label" title="نام کاربری" for="username-pulldown">نام کاربری</label>
+        <div class="form--field-container">
+          <span class="form--text-field-container"><input type="text" name="username" id="username-pulldown" tabindex="1" autocapitalize="none" class="form--text-field" /></span>
+        </div>
+        <div class="form--field-extra-actions">
+              <a title="ایجاد یک حساب کاربری جدید" href="/account/register">ایجاد یک حساب کاربری جدید</a>
+        </div>
+      </div>
+
+      <div class="form--field -required">
+        <label class="form--label" title="رمز عبور" for="password-pulldown">رمز عبور</label>
+        <div class="form--field-container">
+          <span class="form--text-field-container"><input type="password" name="password" id="password-pulldown" tabindex="1" class="form--text-field -password" /></span>
+        </div>
+        <div class="form--field-extra-actions">
+            <a href="/account/lost_password">رمز عبور خود را فراموش کرده‌اید؟</a>
+        </div>
+      </div>
+
+      <div class="form--field">
+        <label class="form--label">
+          &nbsp;
+        </label>
+        <input type="submit" name="login" id="login-pulldown"
+          value="ورود" class="button -highlight" tabindex="1" />
+      </div>
+    </div>
+
+    
+
+</form></div>
+</ul></li></ul>
+      </div>
+    </header>
+  <div id="main"
+       class="can-hide-navigation nosidebar">
+    <div class="content-overlay"></div>
+    <main id="content-wrapper" class="can-hide-navigation nosidebar">
+        <div id="breadcrumb" class="can-hide-navigation nosidebar">
+          <span style = 'display: block' class = 'position-label hidden-for-sighted'>شما اینجایی:</span>
+          <ul class="op-breadcrumb" data-qa-selector="op-breadcrumb"><li class="first-breadcrumb-element">ورود</li></ul>
+          
+        </div>
+      
+      <div id="content" class="can-hide-navigation nosidebar">
+        <h1 class="hidden-for-sighted">محتوا</h1>
+        
+          <div style="text-align:center;">
+</div>
+
+<div id="login-form" class="form -bordered">
+  <h1>ورود</h1>
+
+  <hr class="form--separator" />
+    
+<form autocomplete="off" class="-wide-labels user-login--form form" action="/login" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" /><input type="hidden" name="authenticity_token" value="YxKJM2fooCLZWcmHJVkN5/A8A2Vk1tHcFP2cFm7GeAKjqCvSeDQNwJ9gYN3y0XimxampfKsdbk2moiUniw5cAw==" autocomplete="off" />
+  <input type="hidden" name="back_url" value="http%3A%2F%2Fkarban.jaboun.network%2Fusers%2F14%2Favatar" autocomplete="off" />
+
+  <div class="form--field -required">
+    <label class="form--label" title="نام کاربری" for="username">نام کاربری</label>
+    <div class="form--field-container">
+      <span class="form--text-field-container"><input type="text" name="username" id="username" autofocus="autofocus" autocapitalize="none" class="form--text-field" /></span>
+    </div>
+  </div>
+
+  <div class="form--field -required">
+    <label class="form--label" title="رمز عبور" for="password">رمز عبور</label>
+    <div class="form--field-container">
+      <span class="form--text-field-container"><input type="password" name="password" id="password" class="form--text-field -password" /></span>
+    </div>
+  </div>
+
+
+  <input type="submit" name="login" value="ورود" class="button -highlight" data-disable-with="در حال دانلود ..." />
+
+  <div class="login-options-container">
+    <div class="login-links">
+        <a href="/account/lost_password">رمز عبور خود را فراموش کرده‌اید؟</a>
+        <br>
+        <a title="ایجاد یک حساب کاربری جدید" class="registration-modal--activation-link" href="">ایجاد یک حساب کاربری جدید</a>
+    </div>
+  </div>
+</form>
+<section data-augmented-model-wrapper
+         data-activation-selector=".registration-modal--activation-link"
+         data-modal-class-name="registration-modal -highlight">
+  
+<div class="modal-delivery-element">
+  <form class="form -wide-labels spot-modal" id="new_user" action="/account/register" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" /><input type="hidden" name="authenticity_token" value="Vg/0mhnelYFoXcnlWbbJMs94SMTXV9QsjJZb6JY23XYwfNu7D9IzKWLSiAhAd8/S/FbSJkUoNun2JAKXtWy0GA==" autocomplete="off" />
+
+    <input type="hidden" name="back_url" value="http%3A%2F%2Fkarban.jaboun.network%2Fusers%2F14%2Favatar" autocomplete="off" />
+    
+
+    <div class="spot-modal--header">
+      به کاربان خوش آمدید
+    </div>
+    <div class="spot-divider"></div>
+    <div class="spot-modal--body spot-container">
+      <h2>ایجاد یک حساب کاربری جدید</h2>
+      <section class="form--section">
+          <div class="form--field -required -wide-label">
+              <label class="form--label" title="نام کاربری" for="user_login">نام کاربری</label><span class=" form--field-container"><span class="form--text-field-container"><input size="25" required="required" class="form--text-field" aria-required="true" type="text" value="" name="user[login]" id="user_login" /></span></span>
+          </div>
+        <div class="form--field -required -wide-label">
+          <label class="form--label" title="نام" for="user_firstname">نام</label><span class=" form--field-container"><span class="form--text-field-container"><input required="required" class="form--text-field" aria-required="true" type="text" value="" name="user[firstname]" id="user_firstname" /></span></span>
+        </div>
+
+        <div class="form--field -required -wide-label">
+          <label class="form--label" title="نام خانوادگی" for="user_lastname">نام خانوادگی</label><span class=" form--field-container"><span class="form--text-field-container"><input required="required" class="form--text-field" aria-required="true" type="text" value="" name="user[lastname]" id="user_lastname" /></span></span>
+        </div>
+
+          <div class="form--field -required -wide-label">
+            <label class="form--label" title="ایمیل" for="user_mail">ایمیل</label><span class=" form--field-container"><span class="form--text-field-container"><input required="required" class="form--text-field" aria-required="true" type="text" value="" name="user[mail]" id="user_mail" /></span></span>
+          </div>
+
+        
+
+        
+
+
+
+        <br/><br/>
+          <div class="form--field -required -wide-label -reduced-margin">
+            <label class="form--label" title="رمز عبور" for="user_password">رمز عبور</label><span class=" form--field-container"><span class="form--text-field-container"><input required="required" size="25" autocomplete="off" class="form--text-field -password" aria-required="true" type="password" name="user[password]" id="user_password" /></span></span>
+            <div class="form--field-instructions">
+              <em>باید حداقل 10 کاراکتر طول داشته باشد</em>
+            </div>
+          </div>
+          <div class="form--field -required -wide-label">
+            <label class="form--label" title="تأیید" for="user_password_confirmation">تأیید</label><span class=" form--field-container"><span class="form--text-field-container"><input required="required" size="25" autocomplete="off" class="form--text-field -password" aria-required="true" type="password" name="user[password_confirmation]" id="user_password_confirmation" /></span></span>
+          </div>
+      </section>
+
+
+      
+
+    </div>
+
+    <div class="spot-action-bar">
+  <div class="spot-action-bar--right">
+    <button name="button" type="submit" class="button_no-margin -highlight -with-icon icon-checkmark spot-action-bar--action button">ایجاد</button>
+  </div>
+</div>
+
+</form></div>
+
+</section>
+
+  
+
+</div>
+
+
+        
+</div>    </main>
+  </div>
+  <div id="ajax-indicator" style="display:none;"><span>در حال دانلود ...</span></div>
+</div>
+<script nonce="J3aDzy6cCNbP2snxManCKM3FChJzyG31KZn35rhlnjU=">
+  // execute these lines to prevent flickering when page loads:
+
+  (function($) {
+    var wrapper = $('#wrapper');
+    var savedMainMenuWidth = window.OpenProject.guardedLocalStorage("openProject-mainMenuWidth");
+    var mainMenuCollapsed =  window.OpenProject.guardedLocalStorage("openProject-mainMenuCollapsed");
+
+    if (window.innerWidth < 680) {
+      // force hide on load for mobile
+      $('.can-hide-navigation').addClass('hidden-navigation');
+    }
+
+    if (mainMenuCollapsed === 'true') {
+      savedMainMenuWidth = 0;
+    }
+
+    if (savedMainMenuWidth || savedMainMenuWidth === 0) {
+      document.documentElement.style.setProperty("--main-menu-width", savedMainMenuWidth + 'px');
+    }
+
+    wrapper.show();
+
+    // Wrapper for page-specific JS from deprecated inline functions
+    // no longer available with CSP.
+    
+  }(jQuery));
+</script><div class="op-wide-autocomplete-wrapper"></div>
+
+</body>
+</html>
+

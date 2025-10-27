@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}داشبورد - {{ settings.system_name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">👋 خوش آمدید، {{ session.full_name }}</h5>
+                <p class="card-text">به سامانه مدیریت پروژه‌های کاربان خوش آمدید.</p>
+                
+                <div class="row mt-4">
+                    <div class="col-md-3">
+                        <div class="card text-center border-primary">
+                            <div class="card-body">
+                                <h1 class="display-4 text-primary">۰</h1>
+                                <p class="card-text">پروژه‌های فعال</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center border-success">
+                            <div class="card-body">
+                                <h1 class="display-4 text-success">۰</h1>
+                                <p class="card-text">وظایف من</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center border-warning">
+                            <div class="card-body">
+                                <h1 class="display-4 text-warning">۰</h1>
+                                <p class="card-text">در حال انجام</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center border-info">
+                            <div class="card-body">
+                                <h1 class="display-4 text-info">۰%</h1>
+                                <p class="card-text">پیشرفت کلی</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">📊 آمار سریع</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group list-group-flush">
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        پروژه‌های اختصاص یافته
+                                        <span class="badge bg-primary rounded-pill">۰</span>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        کارهای تکمیل شده
+                                        <span class="badge bg-success rounded-pill">۰</span>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        کارهای در انتظار
+                                        <span class="badge bg-warning rounded-pill">۰</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">🚀 دسترسی‌های سریع</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <a href="/projects" class="btn btn-outline-primary">
+                                        <i class="bi bi-folder"></i> مدیریت پروژه‌ها
+                                    </a>
+                                    <a href="/reports" class="btn btn-outline-success">
+                                        <i class="bi bi-graph-up"></i> مشاهده گزارش‌ها
+                                    </a>
+                                    <a href="/accounts" class="btn btn-outline-info">
+                                        <i class="bi bi-people"></i> مدیریت حساب‌ها
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

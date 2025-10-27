@@ -1,0 +1,773 @@
+{% extends "base.html" %}
+
+{% block title %}حساب‌ها - {{ settings.system_name }}{% endblock %}
+
+{% block content %}
+<style>
+:root {
+    --header-color: {{ settings.header_color }};
+    --header-text-color: {{ settings.header_text_color }};
+}
+
+/* استایل برای دکمه‌ها */
+.btn-primary, .btn-success, .btn-info {
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-primary:hover, .btn-success:hover, .btn-info:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* فونت بی نازنین برای کل صفحه */
+body {
+    font-family: 'B Nazanin', 'B Nazanin+', 'BNazanin', Tahoma, sans-serif !important;
+}
+
+/* استایل‌های جدید برای تنظیم خودکار عرض ستون‌ها */
+.users-table {
+    table-layout: auto !important;
+    width: 100% !important;
+    min-width: unset !important;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    font-size: 0.85rem;
+    font-family: 'B Nazanin', 'B Nazanin+', 'BNazanin', Tahoma, sans-serif;
+}
+
+.users-table th {
+    background: linear-gradient(135deg, var(--header-color), #0a58ca);
+    color: white;
+    border: none;
+    padding: 0.6rem 0.4rem;
+    font-weight: 600;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.8rem;
+    font-family: 'B Nazanin', 'B Nazanin+', 'BNazanin', Tahoma, sans-serif;
+}
+
+.users-table td {
+    padding: 0.5rem 0.4rem;
+    border-color: #f8f9fa;
+    vertical-align: middle;
+    text-align: center;
+    transition: all 0.3s ease;
+    font-size: 0.8rem;
+    font-family: 'B Nazanin', 'B Nazanin+', 'BNazanin', Tahoma, sans-serif;
+}
+
+.users-table th,
+.users-table td {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+    max-width: none !important;
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+/* برای ستون‌های خاص که محتوای بیشتری دارند */
+.users-table .name-column {
+    min-width: 150px;
+    max-width: 200px;
+}
+
+.users-table .email-column {
+    min-width: 180px;
+    max-width: 250px;
+}
+
+.users-table .department-column {
+    min-width: 120px;
+    max-width: 180px;
+}
+
+.users-table .role-column {
+    min-width: 100px;
+    max-width: 150px;
+}
+
+.users-table .team-column {
+    min-width: 100px;
+    max-width: 150px;
+}
+
+.users-table .status-column {
+    min-width: 90px;
+    max-width: 120px;
+}
+
+.users-table .admin-column {
+    min-width: 80px;
+    max-width: 100px;
+}
+
+.users-table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.users-table tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: translateX(3px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* وضعیت‌های کاربر */
+.status-active {
+    background-color: #d1fae5 !important;
+    color: #065f46 !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.status-locked {
+    background-color: #fee2e2 !important;
+    color: #991b1b !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.status-invited {
+    background-color: #fef3c7 !important;
+    color: #92400e !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.status-registered {
+    background-color: #dbeafe !important;
+    color: #1e40af !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.status-default {
+    background-color: #f3f4f6 !important;
+    color: #374151 !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+/* وضعیت ادمین */
+.admin-true {
+    background-color: #dcfce7 !important;
+    color: #166534 !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.admin-false {
+    background-color: #f3f4f6 !important;
+    color: #6b7280 !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+/* آواتار کاربر */
+.user-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin: 0 auto;
+}
+
+.user-avatar-img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto;
+    display: block;
+    border: 2px solid #dee2e6;
+}
+
+/* آمار */
+.stats-card {
+    background: linear-gradient(135deg, var(--header-color), #0a58ca);
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(13, 110, 253, 0.15);
+}
+
+/* جستجو و فیلتر */
+.search-box {
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+}
+
+.filter-select {
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+    font-size: 0.85rem;
+}
+
+/* badge ها */
+.badge {
+    color: #000 !important;
+    font-weight: 600;
+    font-size: 0.7rem;
+    border: none !important;
+    background: none !important;
+    padding: 0.15rem 0.3rem;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.2;
+}
+
+.status-active,
+.status-locked,
+.status-invited,
+.status-registered,
+.status-default,
+.admin-true,
+.admin-false {
+    color: #000 !important;
+    border: none !important;
+    background: none !important;
+}
+
+/* اضافه کردن اسکرول نرم برای جدول */
+.table-responsive {
+    overflow-x: auto;
+    border-radius: 8px;
+}
+
+/* اطلاعات کش */
+.cache-info {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    border-right: 4px solid var(--header-color);
+}
+
+/* برای حالت responsive */
+@media (max-width: 1400px) {
+    .users-table {
+        font-size: 0.75rem;
+    }
+    
+    .users-table .name-column {
+        min-width: 130px;
+        max-width: 180px;
+    }
+    
+    .users-table .email-column {
+        min-width: 150px;
+        max-width: 200px;
+    }
+}
+
+/* بهبود نمایش روی موبایل */
+@media (max-width: 768px) {
+    .users-table {
+        font-size: 0.7rem;
+    }
+    
+    .users-table th,
+    .users-table td {
+        padding: 0.3rem 0.2rem;
+    }
+}
+</style>
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- هدر و آمار -->
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h5 class="mb-0 text-primary">
+                                <i class="bi bi-people me-2"></i>
+                                مدیریت حساب‌ها
+                            </h5>
+                            <p class="text-muted mb-0">لیست کامل کاربران سیستم کاربان</p>
+                        </div>
+                        <div class="col-md-6 text-start">
+                            <button class="btn btn-primary btn-sm me-2" onclick="refreshUsers()">
+                                <i class="bi bi-arrow-repeat"></i> به‌روزرسانی لیست
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- آمار سریع -->
+                    <div class="row mt-3">
+                        <div class="col-md-2">
+                            <div class="card stats-card">
+                                <div class="card-body text-center py-2">
+                                    <h4 class="mb-1">{{ stats.total }}</h4>
+                                    <small>کل کاربران</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="card stats-card">
+                                <div class="card-body text-center py-2">
+                                    <h4 class="mb-1">{{ stats.active }}</h4>
+                                    <small>کاربران فعال</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="card stats-card">
+                                <div class="card-body text-center py-2">
+                                    <h4 class="mb-1">{{ stats.locked }}</h4>
+                                    <small>قفل شده</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="card stats-card">
+                                <div class="card-body text-center py-2">
+                                    <h4 class="mb-1">{{ stats.admin }}</h4>
+                                    <small>مدیران سیستم</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="card stats-card">
+                                <div class="card-body text-center py-2">
+                                    <h4 class="mb-1">{{ stats.invited }}</h4>
+                                    <small>دعوت شده</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- اطلاعات کش -->
+                    {% if cache_info %}
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="cache-info">
+                                <i class="bi bi-info-circle"></i>
+                                آخرین به‌روزرسانی: 
+                                <strong>
+                                    {% if cache_info.last_sync %}
+                                        {{ format_sync_date(cache_info.last_sync) }}
+                                    {% else %}
+                                        نامشخص
+                                    {% endif %}
+                                </strong>
+                               
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- جستجو و فیلتر -->
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row g-2">
+                        <div class="col-md-3">
+                            <div class="input-group search-box">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="جستجو در نام، نام کاربری یا ایمیل..." onkeyup="filterUsers()">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select filter-select" id="statusFilter" onchange="filterUsers()">
+                                <option value="">همه وضعیت‌ها</option>
+                                <option value="active">فعال</option>
+                                <option value="locked">قفل شده</option>
+                                <option value="invited">دعوت شده</option>
+                                <option value="registered">ثبت‌نام شده</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select filter-select" id="adminFilter" onchange="filterUsers()">
+                                <option value="">همه سطوح دسترسی</option>
+                                <option value="true">مدیر سیستم</option>
+                                <option value="false">کاربر عادی</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select filter-select" id="departmentFilter" onchange="filterUsers()">
+                                <option value="">همه دپارتمان‌ها</option>
+                                {% set departments = [] %}
+                                {% for user in users %}
+                                    {% if user.department and user.department not in departments %}
+                                        {% set _ = departments.append(user.department) %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% for dept in departments %}
+                                    <option value="{{ dept }}">{{ dept }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- جدول کاربران -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover users-table" id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th class="narrow-column">ردیف</th>
+                                    <th class="narrow-column">آواتار</th>
+                                    <th class="name-column">نام کامل</th>
+                                    <th class="narrow-column">نام کاربری</th>
+                                    <th class="email-column">ایمیل</th>
+                                    <th class="status-column">وضعیت</th>
+                                    <th class="admin-column">سطوح دسترسی</th>
+                                    <th class="department-column">دپارتمان</th>
+                                    <th class="role-column">نقش کاربری</th>
+                                    <th class="team-column">تیم</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                {% if users %}
+                                    {% for user in users %}
+                                    <tr class="user-row" 
+                                        data-name="{{ user.name|lower if user.name else '' }}" 
+                                        data-username="{{ user.login|lower if user.login else '' }}" 
+                                        data-email="{{ user.email|lower if user.email else '' }}"
+                                        data-status="{{ user.status }}"
+                                        data-admin="{{ user.admin|lower }}"
+                                        data-department="{{ user.department|lower if user.department else '' }}"
+                                        data-role="{{ user.user_role_custom|lower if user.user_role_custom else '' }}"
+                                        data-team="{{ user.team|lower if user.team else '' }}">
+                                        
+                                        <!-- شماره ردیف -->
+                                        <td>
+                                            <strong>{{ loop.index }}</strong>
+                                        </td>
+                                        
+                                        <!-- آواتار -->
+                                        <td>
+                                            {% set display_avatar = get_user_display_avatar(user.id) %}
+                                            {% if display_avatar %}
+                                                <img src="{{ url_for('static', filename=display_avatar) }}" 
+                                                     alt="آواتار" 
+                                                     class="user-avatar-img"
+                                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                                     title="آواتار کاربر">
+                                                <div class="user-avatar" style="display: none;">
+                                                    {{ user.name[:1] if user.name else 'U' }}
+                                                </div>
+                                            {% else %}
+                                                <div class="user-avatar" title="آواتار پیش‌فرض">
+                                                    {{ user.name[:1] if user.name else 'U' }}
+                                                </div>
+                                            {% endif %}
+                                        </td>
+                                        
+                                        <!-- نام کامل -->
+                                        <td class="name-column">
+                                            <strong>{{ user.name or 'بدون نام' }}</strong>
+                                        </td>
+                                        
+                                        <!-- نام کاربری -->
+                                        <td>
+                                            <code>{{ user.login or '---' }}</code>
+                                        </td>
+                                        
+                                        <!-- ایمیل -->
+                                        <td class="email-column">
+                                            {{ user.email or '---' }}
+                                        </td>
+                                        
+                                        <!-- وضعیت -->
+                                        <td class="status-column">
+                                            {% if user.status %}
+                                                <span class="badge status-{{ user.status }} rounded-pill">
+                                                    {% if user.status == 'active' %}
+                                                        فعال
+                                                    {% elif user.status == 'locked' %}
+                                                        قفل شده
+                                                    {% elif user.status == 'invited' %}
+                                                        دعوت شده
+                                                    {% elif user.status == 'registered' %}
+                                                        ثبت‌نام شده
+                                                    {% else %}
+                                                        {{ user.status }}
+                                                    {% endif %}
+                                                </span>
+                                            {% else %}
+                                                <span class="badge status-default rounded-pill">نامشخص</span>
+                                            {% endif %}
+                                        </td>
+                                        
+                                        <!-- مدیر سیستم -->
+                                        <td class="admin-column">
+                                            <span class="badge admin-{{ user.admin }} rounded-pill">
+                                                {% if user.admin %}
+                                                    <i class="bi bi-shield-check me-1"></i> مدیر سیستم
+                                                {% else %}
+                                                    <i class="bi bi-person me-1"></i> کاربر عادی
+                                                {% endif %}
+                                            </span>
+                                        </td>
+                                        
+                                        <!-- دپارتمان -->
+                                        <td class="department-column">
+                                            {% if user.department %}
+                                                <span class="badge bg-primary rounded-pill">
+                                                    {{ user.department }}
+                                                </span>
+                                            {% else %}
+                                                <span class="text-muted">---</span>
+                                            {% endif %}
+                                        </td>
+                                        
+                                        <!-- نقش کاربری -->
+                                        <td class="role-column">
+                                            {% if user.user_role_custom %}
+                                                <span class="badge bg-info rounded-pill">
+                                                    {{ user.user_role_custom }}
+                                                </span>
+                                            {% else %}
+                                                <span class="text-muted">---</span>
+                                            {% endif %}
+                                        </td>
+                                        
+                                        <!-- تیم -->
+                                        <td class="team-column">
+                                            {% if user.team %}
+                                                <span class="badge bg-success rounded-pill">
+                                                    {{ user.team }}
+                                                </span>
+                                            {% else %}
+                                                <span class="text-muted">---</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                <tr>
+                                    <td colspan="10" class="text-center py-5">
+                                        <i class="bi bi-people" style="font-size: 3rem; color: #6c757d;"></i>
+                                        <h5 class="mt-3 text-muted">کاربری یافت نشد</h5>
+                                        <p class="text-muted">هیچ کاربری در سیستم کاربان وجود ندارد یا امکان دسترسی به اطلاعات کاربران میسر نیست.</p>
+                                        <button class="btn btn-primary" onclick="refreshUsers()">
+                                            <i class="bi bi-arrow-repeat"></i> تلاش مجدد
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- اطلاعات پagination -->
+                    {% if users %}
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <small class="text-muted">
+                                نمایش <strong id="visibleCount">{{ users|length }}</strong> کاربر از <strong>{{ stats.total }}</strong> کاربر
+                            </small>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// تابع برای تنظیم خودکار عرض ستون‌ها
+function autoAdjustColumnWidths() {
+    const table = document.getElementById('usersTable');
+    if (!table) return;
+    
+    console.log('🔄 تنظیم خودکار عرض ستون‌ها...');
+    
+    // ریست کردن استایل‌ها
+    const headers = table.querySelectorAll('th');
+    const cells = table.querySelectorAll('td');
+    
+    headers.forEach(header => {
+        header.style.width = '';
+        header.style.minWidth = '';
+        header.style.maxWidth = '';
+    });
+    
+    cells.forEach(cell => {
+        cell.style.width = '';
+        cell.style.minWidth = '';
+        cell.style.maxWidth = '';
+    });
+    
+    // تنظیم table-layout به auto
+    table.style.tableLayout = 'auto';
+    
+    console.log('✅ عرض ستون‌ها به صورت خودکار تنظیم شد');
+}
+
+// فیلتر کردن کاربران
+function filterUsers() {
+    const searchText = document.getElementById('searchInput').value.toLowerCase();
+    const statusFilter = document.getElementById('statusFilter').value;
+    const adminFilter = document.getElementById('adminFilter').value;
+    const departmentFilter = document.getElementById('departmentFilter').value;
+    
+    const userRows = document.querySelectorAll('.user-row');
+    let visibleCount = 0;
+    
+    userRows.forEach((row, index) => {
+        const userName = row.getAttribute('data-name');
+        const userUsername = row.getAttribute('data-username');
+        const userEmail = row.getAttribute('data-email');
+        const userStatus = row.getAttribute('data-status');
+        const userAdmin = row.getAttribute('data-admin');
+        const userDepartment = row.getAttribute('data-department');
+        const userRole = row.getAttribute('data-role');
+        const userTeam = row.getAttribute('data-team');
+        
+        const matchesSearch = searchText === '' || 
+                            userName.includes(searchText) || 
+                            userUsername.includes(searchText) || 
+                            userEmail.includes(searchText);
+        
+        const matchesStatus = !statusFilter || userStatus === statusFilter;
+        const matchesAdmin = !adminFilter || userAdmin === adminFilter;
+        const matchesDepartment = !departmentFilter || userDepartment.includes(departmentFilter.toLowerCase());
+        
+        if (matchesSearch && matchesStatus && matchesAdmin && matchesDepartment) {
+            row.style.display = 'table-row';
+            visibleCount++;
+            
+            // به‌روزرسانی شماره ردیف
+            const rowNumberCell = row.querySelector('td:first-child');
+            if (rowNumberCell) {
+                rowNumberCell.innerHTML = `<strong>${visibleCount}</strong>`;
+            }
+        } else {
+            row.style.display = 'none';
+        }
+    });
+    
+    // نمایش پیام اگر هیچ کاربری پیدا نشد
+    const emptyState = document.querySelector('.text-center.py-5');
+    if (emptyState) {
+        emptyState.style.display = visibleCount === 0 ? 'table-row' : 'none';
+    }
+    
+    // به‌روزرسانی تعداد نمایش داده شده
+    document.getElementById('visibleCount').textContent = visibleCount;
+    
+    console.log(`فیلتر اعمال شد: ${visibleCount} کاربر نمایش داده می‌شوند`);
+}
+
+// به‌روزرسانی لیست کاربران
+function refreshUsers() {
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    
+    btn.innerHTML = '<i class="bi bi-arrow-repeat spinner"></i> در حال به‌روزرسانی...';
+    btn.disabled = true;
+    
+    fetch('/accounts/refresh')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('لیست کاربران با موفقیت به‌روزرسانی شد', 'success');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                showToast('خطا: ' + data.message, 'error');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        })
+        .catch(error => {
+            showToast('خطا در ارتباط با سرور', 'error');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
+}
+
+// نمایش toast
+function showToast(message, type = 'info') {
+    const toastContainer = document.getElementById('toastContainer');
+    if (!toastContainer) {
+        const container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.style.position = 'fixed';
+        container.style.top = '20px';
+        container.style.right = '20px';
+        container.style.zIndex = '10000';
+        document.body.appendChild(container);
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${type} alert-dismissible fade show`;
+    toast.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.getElementById('toastContainer').appendChild(toast);
+    
+    // حذف خودکار بعد از 5 ثانیه
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.remove();
+        }
+    }, 5000);
+}
+
+// اجرای خودکار تنظیم عرض ستون‌ها
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        autoAdjustColumnWidths();
+    }, 500);
+    
+    // تنظیم مجدد هنگام فیلتر کردن
+    const originalFilterUsers = window.filterUsers;
+    window.filterUsers = function() {
+        originalFilterUsers();
+        setTimeout(() => {
+            autoAdjustColumnWidths();
+        }, 300);
+    };
+    
+    // تنظیم مجدد هنگام تغییر سایز پنجره
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            autoAdjustColumnWidths();
+        }, 250);
+    });
+    
+    console.log('تعداد کاربران:', {{ users|length }});
+});
+
+// اضافه کردن استایل برای spinner
+const style = document.createElement('style');
+style.innerHTML = `
+    .spinner {
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

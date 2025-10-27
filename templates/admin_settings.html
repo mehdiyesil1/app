@@ -1,0 +1,354 @@
+{% extends "base.html" %}
+
+{% block title %}تنظیمات سیستم - {{ settings.system_name }}{% endblock %}
+
+{% block content %}
+<style>
+.compact-form .form-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+.compact-form .form-control, .compact-form .form-select {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.5rem;
+    height: calc(1.8em + 0.6rem);
+}
+.compact-form .form-text {
+    font-size: 0.75rem;
+}
+.compact-form .card {
+    margin-bottom: 0.5rem;
+}
+.compact-form .card-header {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+}
+.compact-form .card-body {
+    padding: 0.8rem;
+}
+.compact-form .row {
+    margin-bottom: 0.8rem;
+}
+.compact-form .input-group {
+    margin-bottom: 0.3rem;
+}
+.compact-form .feature-icon-select {
+    max-width: 70px;
+    font-size: 0.8rem;
+}
+.small-preview {
+    transform: scale(0.85);
+    transform-origin: top right;
+}
+.column-settings-table th, .column-settings-table td {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.5rem;
+}
+</style>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card compact-form">
+            <div class="card-header d-flex justify-content-between align-items-center py-2">
+                <h6 class="mb-0">⚙️ تنظیمات سیستم</h6>
+                <div>
+                    <button type="submit" form="settingsForm" class="btn btn-primary btn-sm">
+                        <i class="bi bi-check-circle"></i> ذخیره
+                    </button>
+                    <a href="/dashboard" class="btn btn-secondary btn-sm">
+                        <i class="bi bi-arrow-right"></i> بازگشت
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <form id="settingsForm" method="POST" action="/admin/save_settings" enctype="multipart/form-data">
+                    
+                    <!-- تنظیمات عمومی در یک ردیف -->
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">نام سیستم</label>
+                            <input type="text" name="system_name" class="form-control" value="{{ settings.system_name }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">لوگو سیستم</label>
+                            <input type="file" name="logo" class="form-control" accept="image/*">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">پس‌زمینه</label>
+                            <input type="file" name="background" class="form-control" accept="image/*">
+                        </div>
+                    </div>
+
+                    <!-- پیش‌نمایش فایل‌ها -->
+                    {% if settings.logo_path or settings.background_path %}
+                    <div class="row g-2 mb-3">
+                        {% if settings.logo_path %}
+                        <div class="col-md-6">
+                            <small class="text-muted">لوگو فعلی:</small>
+                            <img src="{{ url_for('static', filename=settings.logo_path) }}" alt="لوگو" width="40" class="border rounded p-1 d-block">
+                        </div>
+                        {% endif %}
+                        {% if settings.background_path %}
+                        <div class="col-md-6">
+                            <small class="text-muted">پس‌زمینه فعلی:</small>
+                            <img src="{{ url_for('static', filename=settings.background_path) }}" alt="پس‌زمینه" width="60" class="border rounded p-1 d-block">
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <!-- تنظیمات رنگ‌ها -->
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">رنگ هدر</label>
+                            <input type="color" name="header_color" class="form-control form-control-color" value="{{ settings.header_color }}" id="headerColor">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">رنگ متن هدر</label>
+                            <input type="color" name="header_text_color" class="form-control form-control-color" value="{{ settings.header_text_color }}" id="headerTextColor">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">رنگ پس‌زمینه</label>
+                            <input type="color" name="background_color" class="form-control form-control-color" value="{{ settings.background_color }}" id="backgroundColor">
+                        </div>
+                    </div>
+
+                    <!-- پیش‌نمایش رنگ‌ها -->
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="form-label">پیش‌نمایش رنگ‌ها:</label>
+                            <div class="p-2 border rounded small-preview" id="backgroundPreview" style="background-color: {{ settings.background_color }};">
+                                <div class="p-2 rounded mb-1 d-flex align-items-center" id="headerPreview" style="background-color: {{ settings.header_color }}; color: {{ settings.header_text_color }};">
+                                    {% if settings.logo_path %}
+                                    <img src="{{ url_for('static', filename=settings.logo_path) }}" alt="Logo" width="20" height="20" class="rounded-circle me-1">
+                                    {% else %}
+                                    <i class="bi bi-building me-1"></i>
+                                    {% endif %}
+                                    <span style="font-size: 0.8rem;">{{ settings.system_name }}</span>
+                                </div>
+                                <div class="p-1">
+                                    <small class="text-muted" style="font-size: 0.7rem;">پیش‌نمایش ظاهر سیستم</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- تنظیمات دکمه ورود -->
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-8">
+                            <label class="form-label">متن دکمه ورود</label>
+                            <input type="text" name="login_button_text" class="form-control" value="{{ settings.login_button_text }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">آیکون دکمه</label>
+                            <select name="login_button_icon" class="form-select">
+                                <option value="bi-box-arrow-in-right" {% if settings.login_button_icon == 'bi-box-arrow-in-right' %}selected{% endif %}>📤 ورود</option>
+                                <option value="bi-key" {% if settings.login_button_icon == 'bi-key' %}selected{% endif %}>🔑 کلید</option>
+                                <option value="bi-lock" {% if settings.login_button_icon == 'bi-lock' %}selected{% endif %}>🔒 قفل</option>
+                                <option value="bi-person" {% if settings.login_button_icon == 'bi-person' %}selected{% endif %}>👤 شخص</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- تنظیمات موقعیت فرم -->
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-3">
+                            <label class="form-label">عرض فرم (px)</label>
+                            <input type="number" name="login_width" class="form-control" value="{{ settings.login_width }}" min="300" max="500">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">ارتفاع فرم</label>
+                            <input type="text" name="login_height" class="form-control" value="{{ settings.login_height }}" placeholder="auto">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">موقعیت افقی (%)</label>
+                            <input type="number" name="login_position_x" class="form-control" value="{{ settings.login_position_x }}" min="0" max="100">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">موقعیت عمودی (%)</label>
+                            <input type="number" name="login_position_y" class="form-control" value="{{ settings.login_position_y }}" min="0" max="100">
+                        </div>
+                    </div>
+
+                    <!-- تنظیمات امنیتی -->
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">حداکثر تلاش لاگین</label>
+                            <input type="number" name="max_login_attempts" class="form-control" value="{{ settings.max_login_attempts }}" min="1" max="10">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">زمان قفل (دقیقه)</label>
+                            <input type="number" name="lockout_time" class="form-control" value="{{ settings.lockout_time }}" min="1" max="240">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Session Timeout (دقیقه)</label>
+                            <input type="number" name="session_timeout" class="form-control" value="{{ settings.session_timeout|default('30') }}" min="1" max="480">
+                            <small class="form-text">زمان عدم فعالیت قبل از خروج خودکار</small>
+                        </div>
+                    </div>
+
+                    <!-- تنظیمات پیام‌ها -->
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">زمان نمایش پیام (ثانیه)</label>
+                            <input type="number" name="flash_timeout" class="form-control" value="{{ settings.flash_timeout }}" min="1" max="10">
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label">متن کپی رایت</label>
+                            <input type="text" name="copyright_text" class="form-control" value="{{ settings.copyright_text }}">
+                        </div>
+                    </div>
+
+                    <!-- تنظیمات متن‌های صفحه ورود -->
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">ویژگی ۱</label>
+                            <div class="input-group">
+                                <input type="text" name="login_text_1" class="form-control" value="{{ settings.login_text_1 }}" placeholder="متن ویژگی">
+                                <select name="login_icon_1" class="form-select feature-icon-select">
+                                    <option value="🔐" {% if settings.login_icon_1 == '🔐' %}selected{% endif %}>🔐</option>
+                                    <option value="📊" {% if settings.login_icon_1 == '📊' %}selected{% endif %}>📊</option>
+                                    <option value="📈" {% if settings.login_icon_1 == '📈' %}selected{% endif %}>📈</option>
+                                    <option value="🚀" {% if settings.login_icon_1 == '🚀' %}selected{% endif %}>🚀</option>
+                                    <option value="💼" {% if settings.login_icon_1 == '💼' %}selected{% endif %}>💼</option>
+                                    <option value="👥" {% if settings.login_icon_1 == '👥' %}selected{% endif %}>👥</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">ویژگی ۲</label>
+                            <div class="input-group">
+                                <input type="text" name="login_text_2" class="form-control" value="{{ settings.login_text_2 }}" placeholder="متن ویژگی">
+                                <select name="login_icon_2" class="form-select feature-icon-select">
+                                    <option value="🔐" {% if settings.login_icon_2 == '🔐' %}selected{% endif %}>🔐</option>
+                                    <option value="📊" {% if settings.login_icon_2 == '📊' %}selected{% endif %}>📊</option>
+                                    <option value="📈" {% if settings.login_icon_2 == '📈' %}selected{% endif %}>📈</option>
+                                    <option value="🚀" {% if settings.login_icon_2 == '🚀' %}selected{% endif %}>🚀</option>
+                                    <option value="💼" {% if settings.login_icon_2 == '💼' %}selected{% endif %}>💼</option>
+                                    <option value="👥" {% if settings.login_icon_2 == '👥' %}selected{% endif %}>👥</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">ویژگی ۳</label>
+                            <div class="input-group">
+                                <input type="text" name="login_text_3" class="form-control" value="{{ settings.login_text_3 }}" placeholder="متن ویژگی">
+                                <select name="login_icon_3" class="form-select feature-icon-select">
+                                    <option value="🔐" {% if settings.login_icon_3 == '🔐' %}selected{% endif %}>🔐</option>
+                                    <option value="📊" {% if settings.login_icon_3 == '📊' %}selected{% endif %}>📊</option>
+                                    <option value="📈" {% if settings.login_icon_3 == '📈' %}selected{% endif %}>📈</option>
+                                    <option value="🚀" {% if settings.login_icon_3 == '🚀' %}selected{% endif %}>🚀</option>
+                                    <option value="💼" {% if settings.login_icon_3 == '💼' %}selected{% endif %}>💼</option>
+                                    <option value="👥" {% if settings.login_icon_3 == '👥' %}selected{% endif %}>👥</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- تنظیمات نمایش ستون‌ها -->
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0">📊 تنظیمات نمایش ستون‌ها در جدول پروژه‌ها</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm column-settings-table">
+                                            <thead>
+                                                <tr>
+                                                    <th width="50">نمایش</th>
+                                                    <th>نام ستون</th>
+                                                    <th width="80">ترتیب</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% set column_names = {
+                                                    'row_number': 'شماره ردیف',
+                                                    'avatar': 'آواتار',
+                                                    'id': 'ID',
+                                                    'name': 'نام پروژه',
+                                                    'identifier': 'شناسه',
+                                                    'project_code': 'کد پروژه',
+                                                    'voltage_level': 'سطح ولتاژ',
+                                                    'panel_type': 'نوع تابلو',
+                                                    'panel_count': 'تعداد تابلو',
+                                                    'cell_count': 'تعداد سلول',
+                                                    'department': 'دپارتمان',
+                                                    'team_leader': 'مسئول تیم',
+                                                    'team': 'تیم',
+                                                    'equipment_date': 'تاریخ لیست تجهیزات',
+                                                    'urgent': 'پروژه فوری',
+                                                    'status': 'وضعیت',
+                                                    'active': 'فعال',
+                                                    'public': 'دسترسی',
+                                                    'created_at': 'تاریخ ایجاد',
+                                                    'updated_at': 'آخرین بروزرسانی',
+                                                    'link': 'لینک',
+                                                    'description': 'توضیحات',
+                                                    'progress_percentage': 'درصد پروژه های در مسیر'
+                                                } %}
+                                                
+                                                {% for column_name, display_name in column_names.items() %}
+                                                {% set column_setting = column_settings.get(column_name, {'visible': True, 'order': loop.index0}) %}
+                                                <tr>
+                                                    <td>
+                                                        <input type="checkbox" name="column_{{ column_name }}" 
+                                                               {% if column_setting.visible %}checked{% endif %} 
+                                                               class="form-check-input">
+                                                    </td>
+                                                    <td>{{ display_name }}</td>
+                                                    <td>
+                                                        <input type="number" name="order_{{ column_name }}" 
+                                                               value="{{ column_setting.order }}" 
+                                                               class="form-control form-control-sm" 
+                                                               min="0" max="100">
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <small class="text-muted">ستون‌های غیرفعال شده در جدول پروژه‌ها نمایش داده نمی‌شوند.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// بروزرسانی پیش‌نمایش رنگ‌ها به صورت زنده
+function updateColorPreview() {
+    const headerColor = document.getElementById('headerColor').value;
+    const headerTextColor = document.getElementById('headerTextColor').value;
+    const backgroundColor = document.getElementById('backgroundColor').value;
+    
+    const headerPreview = document.getElementById('headerPreview');
+    if (headerPreview) {
+        headerPreview.style.backgroundColor = headerColor;
+        headerPreview.style.color = headerTextColor;
+    }
+    
+    const backgroundPreview = document.getElementById('backgroundPreview');
+    if (backgroundPreview) {
+        backgroundPreview.style.backgroundColor = backgroundColor;
+    }
+}
+
+// اجرای اولیه
+document.addEventListener('DOMContentLoaded', function() {
+    updateColorPreview();
+    
+    const colorInputs = document.querySelectorAll('input[type="color"]');
+    colorInputs.forEach(input => {
+        input.addEventListener('input', updateColorPreview);
+    });
+});
+</script>
+{% endblock %}
